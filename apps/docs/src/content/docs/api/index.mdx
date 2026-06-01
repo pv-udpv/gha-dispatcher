@@ -330,3 +330,83 @@ Opens a pull request from the fork branch to the upstream default branch.
 |---|---|
 | `422` | PR already exists for this branch, or branch not found |
 | `403` | PAT lacks `Pull requests: write` permission |
+
+---
+
+## `POST /api/runs/:run_id/rerun`
+
+Re-runs a completed workflow run. Available for runs in a terminal state (`completed` with conclusion `failure`, `cancelled`, or `timed_out`). GitHub limits rerun to runs no older than 30 days.
+
+**Headers**
+
+| Header | Required | Description |
+|---|---|---|
+| `Authorization` | yes | `Bearer <fine-grained-PAT>` (needs `Actions: write`) |
+| `Content-Type` | yes | `application/json` |
+
+**Request body**
+
+```json
+{ "enable_debug_logging": false }
+```
+
+**Response** — `201 Created`
+
+```json
+{ "ok": true, "run_id": 1234567890 }
+```
+
+Every action is logged to `gha_dispatcher.dispatch_log` with `repo_slug = "_rerun"`, the run URL, and the resolved user login.
+
+**Errors**
+
+| Status | Meaning |
+|---|---|
+| `403` | Run not in a terminal state, or older than 30 days |
+| `404` | Run does not exist or PAT cannot see the repo |
+
+```bash
+curl -X POST https://gha-dispatcher.example/api/runs/1234567890/rerun \
+  -H "Authorization: Bearer $GH_PAT" \
+  -H "Content-Type: application/json" \
+  -d '{}'
+```
+
+---
+
+## `POST /api/runs/:run_id/rerun-failed-jobs`
+
+Re-runs only the failed jobs in a multi-job workflow. Same eligibility rules as `/rerun`.
+
+**Request body**
+
+```json
+{ "enable_debug_logging": false }
+```
+
+**Response** — `201 Created`
+
+```json
+{ "ok": true, "run_id": 1234567890 }
+```
+
+Use when only one matrix leg or a single step failed and you don't want to spend CI minutes re-running the green jobs.
+
+---
+
+## `POST /api/runs/:run_id/cancel`
+
+Cancels a run that is `queued`, `in_progress`, `waiting`, or `pending`.
+
+**Response** — `202 Accepted`
+
+```json
+{ "ok": true, "run_id": 1234567890 }
+```
+
+**Errors**
+
+| Status | Meaning |
+|---|---|
+| `409` | Run already finished — cannot cancel |
+| `403` | PAT lacks `Actions: write` |
