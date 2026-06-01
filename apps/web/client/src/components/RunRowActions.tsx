@@ -1,0 +1,137 @@
+import {
+  MoreVertical,
+  ExternalLink,
+  RotateCcw,
+  RefreshCw,
+  XCircle,
+  Copy,
+  Hash,
+} from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { useRunActions } from "@/hooks/useRunActions";
+import type { RunSummary } from "@gha-dispatcher/shared";
+
+// Statuses where a run can be re-run.
+const RERUN_CONCLUSIONS = new Set(["failure", "cancelled", "timed_out"]);
+const CANCEL_STATUSES = new Set(["queued", "in_progress", "waiting", "pending"]);
+
+interface RunRowActionsProps {
+  run: RunSummary;
+}
+
+export function RunRowActions({ run }: RunRowActionsProps) {
+  const { toast } = useToast();
+  const { rerun, rerunFailed, cancel, isPending } = useRunActions();
+
+  const canRerun =
+    run.status === "completed" &&
+    run.conclusion != null &&
+    RERUN_CONCLUSIONS.has(run.conclusion);
+
+  const canCancel = run.status != null && CANCEL_STATUSES.has(run.status);
+
+  function handleRerun() {
+    rerun({ run_id: run.id, html_url: run.html_url });
+  }
+
+  function handleRerunFailed() {
+    rerunFailed({ run_id: run.id, html_url: run.html_url });
+  }
+
+  function handleCancel() {
+    cancel({ run_id: run.id, html_url: run.html_url });
+  }
+
+  function handleCopyUrl() {
+    navigator.clipboard.writeText(run.html_url).then(() => {
+      toast({ title: "Run URL copied." });
+    });
+  }
+
+  function handleCopyId() {
+    navigator.clipboard.writeText(String(run.id)).then(() => {
+      toast({ title: `Run ID ${run.id} copied.` });
+    });
+  }
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-6 w-6 shrink-0 opacity-0 transition-opacity group-hover/row:opacity-100 data-[state=open]:opacity-100"
+          aria-label="Run actions"
+          disabled={isPending}
+        >
+          <MoreVertical className="h-3.5 w-3.5" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-52">
+        {/* View logs */}
+        <DropdownMenuItem
+          onClick={() => window.open(run.html_url, "_blank", "noopener")}
+        >
+          <ExternalLink className="h-4 w-4" />
+          View logs
+          <DropdownMenuShortcut>O</DropdownMenuShortcut>
+        </DropdownMenuItem>
+
+        <DropdownMenuSeparator />
+
+        {/* Re-run */}
+        <DropdownMenuItem
+          onClick={handleRerun}
+          disabled={!canRerun || isPending}
+        >
+          <RotateCcw className="h-4 w-4" />
+          Re-run
+          <DropdownMenuShortcut>R</DropdownMenuShortcut>
+        </DropdownMenuItem>
+
+        {/* Re-run failed jobs */}
+        <DropdownMenuItem
+          onClick={handleRerunFailed}
+          disabled={!canRerun || isPending}
+        >
+          <RefreshCw className="h-4 w-4" />
+          Re-run failed jobs only
+        </DropdownMenuItem>
+
+        {/* Cancel */}
+        <DropdownMenuItem
+          onClick={handleCancel}
+          disabled={!canCancel || isPending}
+          className="text-destructive focus:text-destructive"
+        >
+          <XCircle className="h-4 w-4" />
+          Cancel
+          <DropdownMenuShortcut>C</DropdownMenuShortcut>
+        </DropdownMenuItem>
+
+        <DropdownMenuSeparator />
+
+        {/* Copy run URL */}
+        <DropdownMenuItem onClick={handleCopyUrl}>
+          <Copy className="h-4 w-4" />
+          Copy run URL
+        </DropdownMenuItem>
+
+        {/* Copy run ID */}
+        <DropdownMenuItem onClick={handleCopyId}>
+          <Hash className="h-4 w-4" />
+          Copy run ID
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}

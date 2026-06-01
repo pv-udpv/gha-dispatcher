@@ -90,3 +90,23 @@ export interface DispatchLogRow {
 export interface BranchSummary {
   name: string;
 }
+
+// ---------------------------------------------------------------------------
+// Run action schemas (rerun / cancel)
+// ---------------------------------------------------------------------------
+
+export const rerunRequestSchema = z.object({
+  enable_debug_logging: z.boolean().optional().default(false),
+});
+export type RerunRequest = z.infer<typeof rerunRequestSchema>;
+
+export const cancelRequestSchema = z.object({});
+export type CancelRequest = z.infer<typeof cancelRequestSchema>;
+
+export const runActionResponseSchema = z.object({
+  ok: z.boolean(),
+  run_id: z.number().optional(),
+  status: z.number().optional(),
+  message: z.string().optional(),
+});
+export type RunActionResponse = z.infer<typeof runActionResponseSchema>;

@@ -1,7 +1,9 @@
 import type { Express, Request, Response } from "express";
 import type { Server } from "node:http";
+import crypto from "node:crypto";
 import {
   dispatchPayloadSchema,
+  rerunRequestSchema,
   type WorkflowInventory,
   type RunSummary,
 } from "@gha-dispatcher/shared";
@@ -95,6 +97,67 @@ function slimRun(r: any): RunSummary {
 }
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+// ---------------------------------------------------------------------------
+// In-memory PAT-hash → user login cache (60s TTL).
+// ---------------------------------------------------------------------------
+const userLoginCache = new Map<string, { login: string; expiresAt: number }>();
+
+function hashPat(token: string): string {
+  return crypto.createHash("sha256").update(token).digest("hex").slice(0, 16);
+}
+
+async function getCachedLogin(token: string): Promise<string | null> {
+  const key = hashPat(token);
+  const cached = userLoginCache.get(key);
+  if (cached && cached.expiresAt > Date.now()) return cached.login;
+  try {
+    const { data } = await github(token, "/user");
+    const login: string = data?.login ?? null;
+    if (login) {
+      userLoginCache.set(key, { login, expiresAt: Date.now() + 60_000 });
+    }
+    return login;
+  } catch {
+    return null;
+  }
+}
+
+// Log a rerun/cancel action to dispatch_log (best-effort, non-blocking).
+async function logRunAction(
+  token: string,
+  run_id: number,
+  repo_slug: "_rerun" | "_cancel",
+  workflow_name: string,
+  run_url: string,
+): Promise<void> {
+  if (!supabase) return;
+  const user_login = await getCachedLogin(token);
+  void supabase
+    .from(DISPATCH_LOG_TABLE)
+    .insert({
+      repo_slug,
+      repo_full: REPO,
+      workflow_name,
+      run_id,
+      run_url,
+      status: "resolved",
+      user_login,
+    })
+    .then(({ error }) => {
+      if (error) console.error(`[${repo_slug}] supabase log error`, error.message);
+    });
+}
+
+// Fetch a run's name for logging (best-effort).
+async function fetchRunName(token: string, run_id: number): Promise<{ name: string; html_url: string }> {
+  try {
+    const { data } = await github(token, `/repos/${REPO}/actions/runs/${run_id}`);
+    return { name: data?.name ?? String(run_id), html_url: data?.html_url ?? "" };
+  } catch {
+    return { name: String(run_id), html_url: "" };
+  }
+}
 
 export async function registerRoutes(
   httpServer: Server,
@@ -474,6 +537,92 @@ export async function registerRoutes(
       res.json({ number: prNumber, html_url: prUrl });
     } catch (e) {
       next(e);
+    }
+  });
+
+  // -- Rerun all jobs in a run ---------------------------------------------
+  app.post("/api/runs/:run_id/rerun", async (req, res) => {
+    const token = requireToken(req, res);
+    if (!token) return;
+    const run_id = Number(req.params.run_id);
+    if (!Number.isFinite(run_id)) {
+      return res.status(400).json({ ok: false, message: "Invalid run_id" });
+    }
+    const parsed = rerunRequestSchema.safeParse(req.body);
+    const enable_debug_logging = parsed.success ? parsed.data.enable_debug_logging : false;
+    try {
+      const { status } = await github(
+        token,
+        `/repos/${REPO}/actions/runs/${run_id}/rerun`,
+        { method: "POST", body: JSON.stringify({ enable_debug_logging }) },
+      );
+      if (status === 201 || status === 204) {
+        // Fire-and-forget log
+        void fetchRunName(token, run_id).then(({ name, html_url }) =>
+          logRunAction(token, run_id, "_rerun", name, html_url),
+        );
+        return res.status(200).json({ ok: true, run_id });
+      }
+      return res.status(200).json({ ok: false, status, message: "Unexpected GitHub status" });
+    } catch (e: any) {
+      const msg = e?.body?.message || e?.message || "GitHub error";
+      return res.status(200).json({ ok: false, status: e?.status ?? 500, message: msg });
+    }
+  });
+
+  // -- Rerun only failed jobs -----------------------------------------------
+  app.post("/api/runs/:run_id/rerun-failed-jobs", async (req, res) => {
+    const token = requireToken(req, res);
+    if (!token) return;
+    const run_id = Number(req.params.run_id);
+    if (!Number.isFinite(run_id)) {
+      return res.status(400).json({ ok: false, message: "Invalid run_id" });
+    }
+    const parsed = rerunRequestSchema.safeParse(req.body);
+    const enable_debug_logging = parsed.success ? parsed.data.enable_debug_logging : false;
+    try {
+      const { status } = await github(
+        token,
+        `/repos/${REPO}/actions/runs/${run_id}/rerun-failed-jobs`,
+        { method: "POST", body: JSON.stringify({ enable_debug_logging }) },
+      );
+      if (status === 201 || status === 204) {
+        void fetchRunName(token, run_id).then(({ name, html_url }) =>
+          logRunAction(token, run_id, "_rerun", name, html_url),
+        );
+        return res.status(200).json({ ok: true, run_id });
+      }
+      return res.status(200).json({ ok: false, status, message: "Unexpected GitHub status" });
+    } catch (e: any) {
+      const msg = e?.body?.message || e?.message || "GitHub error";
+      return res.status(200).json({ ok: false, status: e?.status ?? 500, message: msg });
+    }
+  });
+
+  // -- Cancel a run ---------------------------------------------------------
+  app.post("/api/runs/:run_id/cancel", async (req, res) => {
+    const token = requireToken(req, res);
+    if (!token) return;
+    const run_id = Number(req.params.run_id);
+    if (!Number.isFinite(run_id)) {
+      return res.status(400).json({ ok: false, message: "Invalid run_id" });
+    }
+    try {
+      const { status } = await github(
+        token,
+        `/repos/${REPO}/actions/runs/${run_id}/cancel`,
+        { method: "POST" },
+      );
+      if (status === 202) {
+        void fetchRunName(token, run_id).then(({ name, html_url }) =>
+          logRunAction(token, run_id, "_cancel", name, html_url),
+        );
+        return res.status(200).json({ ok: true, run_id });
+      }
+      return res.status(200).json({ ok: false, status, message: "Unexpected GitHub status" });
+    } catch (e: any) {
+      const msg = e?.body?.message || e?.message || "GitHub error";
+      return res.status(200).json({ ok: false, status: e?.status ?? 500, message: msg });
     }
   });
 

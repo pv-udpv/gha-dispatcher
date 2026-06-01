@@ -6,6 +6,7 @@ import { useGithub } from "@/lib/github-context";
 import { fetchRuns } from "@/lib/api";
 import { StatusIcon, resolveRunState } from "./StatusDot";
 import { Skeleton } from "@/components/ui/skeleton";
+import { RunRowActions } from "./RunRowActions";
 
 function relTime(iso: string): string {
   try {
@@ -82,37 +83,42 @@ export function RecentRuns() {
             {runsQ.data.map((run) => {
               const state = resolveRunState(run.status, run.conclusion);
               return (
-                <li key={run.id}>
-                  <a
-                    href={run.html_url}
-                    target="_blank"
-                    rel="noreferrer noopener"
+                <li key={run.id} className="group/row">
+                  <div
                     className="hover-elevate flex h-11 items-center gap-2.5 px-4"
                     data-testid={`row-run-${run.id}`}
                   >
                     <StatusIcon state={state} />
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm leading-tight">{run.name}</p>
-                      <div className="flex items-center gap-1.5">
-                        <span className="truncate rounded bg-muted px-1 font-mono text-[0.625rem] text-muted-foreground">
-                          {run.head_branch}
-                        </span>
+                    <a
+                      href={run.html_url}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className="min-w-0 flex-1 flex items-center gap-2.5"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm leading-tight">{run.name}</p>
+                        <div className="flex items-center gap-1.5">
+                          <span className="truncate rounded bg-muted px-1 font-mono text-[0.625rem] text-muted-foreground">
+                            {run.head_branch}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                    {run.actor && (
-                      <img
-                        src={run.actor.avatar_url}
-                        alt={run.actor.login}
-                        title={run.actor.login}
-                        className="h-5 w-5 shrink-0 rounded-full border border-border"
-                        loading="lazy"
-                      />
-                    )}
-                    <span className="shrink-0 whitespace-nowrap font-mono text-[0.625rem] text-muted-foreground">
-                      {relTime(run.created_at)}
-                    </span>
-                    <ExternalLink className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                  </a>
+                      {run.actor && (
+                        <img
+                          src={run.actor.avatar_url}
+                          alt={run.actor.login}
+                          title={run.actor.login}
+                          className="h-5 w-5 shrink-0 rounded-full border border-border"
+                          loading="lazy"
+                        />
+                      )}
+                      <span className="shrink-0 whitespace-nowrap font-mono text-[0.625rem] text-muted-foreground">
+                        {relTime(run.created_at)}
+                      </span>
+                      <ExternalLink className="h-3.5 w-3.5 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover/row:opacity-100" />
+                    </a>
+                    <RunRowActions run={run} />
+                  </div>
                 </li>
               );
             })}
