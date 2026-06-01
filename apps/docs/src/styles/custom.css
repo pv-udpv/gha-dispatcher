@@ -1,0 +1,100 @@
+:root {
+  --sl-color-accent-low: hsl(142 71% 15%);
+  --sl-color-accent: hsl(142 71% 45%);
+  --sl-color-accent-high: hsl(142 71% 70%);
+  --sl-color-white: hsl(220 14% 96%);
+  --sl-color-gray-1: hsl(220 14% 90%);
+  --sl-color-gray-7: hsl(220 14% 14%);
+  --sl-color-black: hsl(220 14% 8%);
+  --sl-font: 'Inter', system-ui, sans-serif;
+  --sl-font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+/* Tighten code blocks */
+.expressive-code pre {
+  border-radius: 8px;
+}
+
+/* Workflow table */
+.workflow-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  margin: 1.5rem 0;
+}
+
+.workflow-table th {
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  background: var(--sl-color-gray-7);
+  color: var(--sl-color-white);
+  font-weight: 600;
+}
+
+.workflow-table td {
+  padding: 0.4rem 0.75rem;
+  border-bottom: 1px solid var(--sl-color-gray-7);
+  vertical-align: top;
+}
+
+.workflow-table tr:hover td {
+  background: color-mix(in srgb, var(--sl-color-accent-low) 30%, transparent);
+}
+
+.badge-group {
+  display: inline-block;
+  padding: 0.1rem 0.45rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-family: var(--sl-font-mono);
+}
+
+.badge-group.pv-cargo  { background: hsl(220 80% 25%); color: hsl(220 80% 85%); }
+.badge-group.pv-sandbox { background: hsl(280 60% 25%); color: hsl(280 60% 85%); }
+.badge-group.web       { background: hsl(142 71% 15%); color: hsl(142 71% 80%); }
+
+/* Schema block */
+.schema-block {
+  background: var(--sl-color-gray-7);
+  border-left: 3px solid var(--sl-color-accent);
+  border-radius: 0 6px 6px 0;
+  padding: 1rem 1.25rem;
+  font-family: var(--sl-font-mono);
+  font-size: 0.82rem;
+  white-space: pre-wrap;
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+
+/* Workflow detail sections */
+.wf-detail {
+  border: 1px solid var(--sl-color-gray-7);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.wf-detail summary {
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--sl-color-accent-high);
+}
+
+.wf-detail dl {
+  margin: 0.5rem 0 0;
+}
+
+.wf-detail dt {
+  font-family: var(--sl-font-mono);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--sl-color-accent-high);
+  margin-top: 0.5rem;
+}
+
+.wf-detail dd {
+  margin-left: 1.5rem;
+  font-size: 0.85rem;
+  color: var(--sl-color-gray-1);
+}

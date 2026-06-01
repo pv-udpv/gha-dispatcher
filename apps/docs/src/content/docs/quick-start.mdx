@@ -1,0 +1,86 @@
+---
+title: Quick Start
+description: Get up and running with GHA Dispatcher in under two minutes.
+---
+
+import { Steps, Aside } from '@astrojs/starlight/components';
+
+## Prerequisites
+
+- A GitHub account with access to the `pv-udpv/pplx-lab` repository.
+- A fine-grained Personal Access Token (PAT) with the right scopes (see below).
+
+## Mint a Fine-Grained PAT
+
+<Steps>
+
+1. Go to **GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens**.
+
+2. Click **Generate new token**.
+
+3. Set **Resource owner** to `pv-udpv` (the org that owns `pplx-lab`).
+
+4. Set **Repository access** to **Only select repositories** → `pv-udpv/pplx-lab`.
+
+5. Under **Permissions**, enable:
+
+   | Permission | Access |
+   |---|---|
+   | Actions | Read and write |
+   | Contents | Read and write |
+   | Pull requests | Read and write |
+   | Metadata | Read (auto-selected) |
+
+6. Set an expiration you're comfortable with (7–30 days is typical for ops use).
+
+7. Click **Generate token** and copy it immediately — GitHub shows it only once.
+
+</Steps>
+
+<Aside type="caution">
+The "Contents: read+write" scope is required for the PR flow (fork → commit → open PR). If you only need to dispatch workflows, "Actions: read+write" is sufficient.
+</Aside>
+
+## Dispatch Your First Workflow
+
+<Steps>
+
+1. **Open the dispatcher** at the preview URL provided by your team.
+
+2. **Paste your PAT** into the token field at the top of the page and press Enter (or click the lock icon).
+
+3. The page loads the list of recent runs and enables the workflow tabs.
+
+4. **Click a group tab** — for example, **pv-cargo**.
+
+5. **Select a workflow** from the list on the left (e.g. "Deploy to pv-cargo").
+
+6. **Fill in the dispatch form** on the right:
+   - **Branch** — the branch or tag to run the workflow on (default: `master`).
+   - **Environment** — optional, used by workflows that parameterize environment names.
+   - Any workflow-specific inputs (e.g. `deploy_wave_403: false`).
+
+7. Click **Dispatch** — a green toast confirms the trigger was accepted. The recent-runs panel updates with the new run.
+
+</Steps>
+
+## Verify the Run
+
+The **Recent Runs** panel (bottom of page) shows up to 20 runs sorted by recency:
+
+- **Queued** → **In progress** → **Completed** (success / failure / cancelled)
+- Click the run link (↗) to open it directly in GitHub Actions.
+
+The panel auto-refreshes every 15 seconds while the page is open.
+
+## PAT security notes
+
+```
+Token lifecycle:
+  Paste into dispatcher    →  held in React useState()
+  Page tab closed/refreshed →  token is gone (not persisted)
+  Server receives request   →  token forwarded to GitHub API, never logged
+  Supabase dispatch_log     →  stores workflow_id, ref, inputs — no token
+```
+
+Your PAT is **never written to** `localStorage`, `sessionStorage`, cookies, or any server-side store.

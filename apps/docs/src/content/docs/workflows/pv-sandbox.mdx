@@ -1,0 +1,37 @@
+---
+title: pv-sandbox Workflows
+description: Workflows managing E2B and Nebula sandbox infrastructure — SSH provisioning, key authorization, and certificate signing.
+---
+
+import WorkflowDetail from '../../../components/WorkflowDetail.astro';
+import workflowsCatalog from '@gha-dispatcher/shared/data/workflows.json';
+
+export const workflows = workflowsCatalog.groups['pv-sandbox'];
+
+The **pv-sandbox** group contains **{workflows.length} workflows** for managing ephemeral sandbox
+environments. These cover SSH access provisioning (E2B sandboxes), Nebula overlay certificate signing,
+and public key authorization on the pv-cargo host.
+
+## Workflows
+
+{workflows.map(wf => (
+  <WorkflowDetail
+    name={wf.name}
+    path={wf.path}
+    hasDispatch={wf.has_dispatch}
+    inputs={wf.dispatch_inputs}
+    collapsible={false}
+  />
+))}
+
+## Notes
+
+- **Authorize Sandbox Key** adds an SSH `pubkey` to the `authorized_keys` on pv-cargo for the `pv` user.
+  The public key must be in OpenSSH format (e.g. `ssh-ed25519 AAAA...`).
+
+- **Nebula cert — sign sandbox node** issues a Nebula overlay certificate for a new sandbox node.
+  The `nebula_ip` defaults to `10.42.0.50/24` — adjust to the next available overlay address.
+  Certificates default to 24h validity and the `sandbox` Nebula group.
+
+- **Sandbox SSH Provision** fully bootstraps an E2B sandbox (identified by `sandbox_id`) for SSH
+  access — installs keys, configures sshd, and optionally joins the Tailscale/Nebula mesh.

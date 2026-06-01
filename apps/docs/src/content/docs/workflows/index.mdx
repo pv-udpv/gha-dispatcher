@@ -1,0 +1,36 @@
+---
+title: Workflow Catalog
+description: All workflows available in the pv-udpv/pplx-lab repository, grouped by infrastructure area.
+---
+
+import WorkflowTable from '../../../components/WorkflowTable.astro';
+import workflowsCatalog from '@gha-dispatcher/shared/data/workflows.json';
+
+export const pvCargo = workflowsCatalog.groups['pv-cargo'];
+export const pvSandbox = workflowsCatalog.groups['pv-sandbox'];
+export const web = workflowsCatalog.groups.web;
+export const total = pvCargo.length + pvSandbox.length + web.length;
+
+This catalog lists all **{total} workflows** bundled in `@gha-dispatcher/shared`'s `workflowsCatalog`.
+The catalog is sourced from `packages/shared/src/data/workflows.json` and is updated whenever the
+workflow inventory is refreshed from `pv-udpv/pplx-lab`.
+
+## Groups
+
+| Group | Count | Description |
+|---|---|---|
+| `pv-cargo` | {pvCargo.length} | Workflows targeting the self-hosted pv-cargo runner (deployments, MCP topology, experiment engine) |
+| `pv-sandbox` | {pvSandbox.length} | Workflows managing E2B and Nebula sandbox infrastructure |
+| `web` | {web.length} | General-purpose web, ADR, and ADR-backfill workflows |
+
+## Full catalog
+
+<WorkflowTable />
+
+## Reading the table
+
+- **Group** — the logical grouping shown in the dispatcher's tab bar.
+- **Name** — human-readable workflow name (from the `name:` field in the YAML).
+- **Path** — the YAML file path relative to `.github/workflows/`.
+- **Dispatch?** — `✓` means the workflow has `on: workflow_dispatch:` defined and can be triggered from the dispatcher.
+- **# Inputs** — number of `workflow_dispatch.inputs` fields. Click a group link in the sidebar to see the full input schema for each workflow.

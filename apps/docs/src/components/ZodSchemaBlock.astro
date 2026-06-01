@@ -1,0 +1,25 @@
+---
+import { zodToJsonSchema } from 'zod-to-json-schema';
+import {
+  dispatchInputSchema,
+  workflowMetaSchema,
+  dispatchPayloadSchema,
+} from '@gha-dispatcher/shared';
+
+interface Props {
+  schema: 'dispatchInput' | 'workflowMeta' | 'dispatchPayload';
+}
+
+const schemaMap = {
+  dispatchInput: dispatchInputSchema,
+  workflowMeta: workflowMetaSchema,
+  dispatchPayload: dispatchPayloadSchema,
+} as const;
+
+const { schema } = Astro.props;
+const zodSchema = schemaMap[schema];
+const jsonSchema = zodToJsonSchema(zodSchema, { name: schema, target: 'openApi3' });
+const pretty = JSON.stringify(jsonSchema.definitions?.[schema] ?? jsonSchema, null, 2);
+---
+
+<pre class="schema-block">{pretty}</pre>

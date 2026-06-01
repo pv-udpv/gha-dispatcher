@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Turborepo cache
+.turbo/
+
+# OS files
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Environment files — local overrides
+.env
+.env.local
+.env.*.local
+
+# Allow the example env file
+!.env.example
+
+# Editor
+.vscode/
+.idea/

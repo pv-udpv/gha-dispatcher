@@ -1,0 +1,60 @@
+---
+title: GHA Dispatcher
+description: One-screen GitHub Actions dispatcher for pv-udpv/pplx-lab
+template: splash
+hero:
+  tagline: Trigger the right workflow without hunting through Actions pages.
+  actions:
+    - text: Quick start
+      link: /quick-start/
+      variant: primary
+    - text: View on GitHub
+      link: https://github.com/pv-udpv/gha-dispatcher
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+import workflowsCatalog from '@gha-dispatcher/shared/data/workflows.json';
+
+export const pvCargo = workflowsCatalog.groups['pv-cargo'];
+export const pvSandbox = workflowsCatalog.groups['pv-sandbox'];
+export const web = workflowsCatalog.groups.web;
+
+<CardGrid>
+  <Card title="3 workflow groups" icon="seti:folder">
+    pv-cargo ({pvCargo.length}) · pv-sandbox ({pvSandbox.length}) · web ({web.length}) — {pvCargo.length + pvSandbox.length + web.length} total workflows from the <code>pv-udpv/pplx-lab</code> repository.
+  </Card>
+  <Card title="PAT in browser memory" icon="seti:lock">
+    Fine-grained token never leaves your tab. No localStorage, no cookies, no server-side storage.
+    Your PAT is held in React state only, cleared on page close.
+  </Card>
+  <Card title="PR flow built in" icon="seti:git">
+    Edit any workflow YAML or this app's own source — open a PR back to the upstream repo without leaving the dispatcher.
+  </Card>
+</CardGrid>
+
+## What is GHA Dispatcher?
+
+GHA Dispatcher is a single-page web application that gives you a focused, keyboard-friendly UI for triggering GitHub Actions `workflow_dispatch` events in the `pv-udpv/pplx-lab` repository.
+
+Instead of navigating through the GitHub Actions UI (Actions tab → select workflow → Run workflow), you:
+
+1. **Open the dispatcher** at its preview URL.
+2. **Paste a fine-grained PAT** — the token is held only in React state (gone on tab close).
+3. **Pick a workflow group** (pv-cargo / pv-sandbox / web) using the tab bar.
+4. **Select the workflow** you want to trigger.
+5. **Fill in dispatch inputs** (branch, environment, and any workflow-specific fields).
+6. **Hit Dispatch** — the app calls `POST /api/dispatch` on the Express backend, which forwards to GitHub's API.
+
+The recent-runs panel shows the last 20 runs so you can track status without leaving the page.
+
+## Key design decisions
+
+| Decision | Rationale |
+|---|---|
+| No auth backend | PAT is held in React state only — zero server-side token storage |
+| Express proxy | Avoids CORS on GitHub API; logs dispatch events to Supabase |
+| Bundled workflow catalog | `workflows.json` in `@gha-dispatcher/shared` avoids cold-start GitHub API calls |
+| Monorepo (pnpm workspaces) | `apps/web`, `apps/docs`, `packages/shared` — consistent tooling |
+| Starlight docs | Allows auto-generating catalog pages from the same `workflowsCatalog` used by the app |

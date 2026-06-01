@@ -1,0 +1,79 @@
+---
+interface Input {
+  name: string;
+  description: string;
+  type: string;
+  required: boolean;
+  default?: string | boolean | null;
+  options: string[];
+}
+
+interface Props {
+  name: string;
+  path: string;
+  hasDispatch: boolean;
+  inputs: Input[];
+  collapsible?: boolean;
+}
+
+const { name, path, hasDispatch, inputs, collapsible = false } = Astro.props;
+const filename = path.replace('.github/workflows/', '');
+---
+
+{collapsible ? (
+  <details class="wf-detail">
+    <summary>{name} <code style="font-size:0.75rem;opacity:0.7">{filename}</code></summary>
+    <div>
+      {inputs.length === 0 ? (
+        <p style="color: var(--sl-color-gray-1); font-size: 0.85rem; margin: 0.5rem 0 0;">
+          No dispatch inputs — branch + environment only.
+        </p>
+      ) : (
+        <dl>
+          {inputs.map(inp => (
+            <>
+              <dt>{inp.name} {inp.required && <span style="color: hsl(0 70% 60%); font-size: 0.7rem;">(required)</span>}</dt>
+              <dd>
+                <strong>Type:</strong> <code>{inp.type}</code>
+                {inp.description && <> · {inp.description}</>}
+                {inp.default != null && inp.default !== '' && (
+                  <> · <strong>Default:</strong> <code>{String(inp.default)}</code></>
+                )}
+                {inp.options.length > 0 && (
+                  <> · <strong>Options:</strong> {inp.options.map(o => <code style="margin-right:0.25rem">{o}</code>)}</>
+                )}
+              </dd>
+            </>
+          ))}
+        </dl>
+      )}
+    </div>
+  </details>
+) : (
+  <div class="wf-detail">
+    <strong>{name}</strong> <code style="font-size:0.75rem;opacity:0.7">{filename}</code>
+    {inputs.length === 0 ? (
+      <p style="color: var(--sl-color-gray-1); font-size: 0.85rem; margin: 0.5rem 0 0;">
+        No dispatch inputs — branch + environment only.
+      </p>
+    ) : (
+      <dl>
+        {inputs.map(inp => (
+          <>
+            <dt>{inp.name} {inp.required && <span style="color: hsl(0 70% 60%); font-size: 0.7rem;">(required)</span>}</dt>
+            <dd>
+              <strong>Type:</strong> <code>{inp.type}</code>
+              {inp.description && <> · {inp.description}</>}
+              {inp.default != null && inp.default !== '' && (
+                <> · <strong>Default:</strong> <code>{String(inp.default)}</code></>
+              )}
+              {inp.options.length > 0 && (
+                <> · <strong>Options:</strong> {inp.options.map(o => <code style="margin-right:0.25rem">{o}</code>)}</>
+              )}
+            </dd>
+          </>
+        ))}
+      </dl>
+    )}
+  </div>
+)}

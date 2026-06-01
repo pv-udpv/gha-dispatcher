@@ -1,0 +1,332 @@
+---
+title: API Endpoints
+description: Complete reference for the GHA Dispatcher Express API.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+The GHA Dispatcher backend is an Express server that proxies GitHub REST API calls and logs dispatch events to Supabase.
+All endpoints expect and return JSON. The PAT is forwarded via the `Authorization: Bearer <token>` header.
+
+<Aside type="note">
+All API routes are served from the same origin as the React SPA. There is no separate API subdomain.
+</Aside>
+
+---
+
+## `GET /api/health`
+
+Simple liveness probe.
+
+**Response**
+
+```json
+{ "status": "ok", "ts": "2025-01-15T12:00:00.000Z" }
+```
+
+**Example**
+
+```bash
+curl https://your-dispatcher.app/api/health
+```
+
+---
+
+## `GET /api/workflows`
+
+Returns the bundled workflow catalog from `@gha-dispatcher/shared`.
+
+**Response**
+
+```json
+{
+  "owner": "pv-udpv",
+  "repo": "pv-udpv/pplx-lab",
+  "default_branch": "master",
+  "groups": {
+    "pv-cargo": [ /* WorkflowMeta[] */ ],
+    "pv-sandbox": [ /* WorkflowMeta[] */ ],
+    "web": [ /* WorkflowMeta[] */ ]
+  }
+}
+```
+
+The response shape matches the `WorkflowInventory` TypeScript interface from `@gha-dispatcher/shared`. No GitHub API call is made — this is served from the bundled JSON.
+
+**Example**
+
+```bash
+curl https://your-dispatcher.app/api/workflows
+```
+
+---
+
+## `GET /api/branches`
+
+Searches branches in `pv-udpv/pplx-lab`. Proxied to GitHub's branch listing API.
+
+**Query parameters**
+
+| Param | Type | Description |
+|---|---|---|
+| `q` | string | Prefix to filter branches by name |
+
+**Headers**
+
+| Header | Required | Description |
+|---|---|---|
+| `Authorization` | yes | `Bearer <fine-grained-PAT>` |
+
+**Response**
+
+```json
+[
+  { "name": "master" },
+  { "name": "pplx/feat/pplx-rest-proxy" }
+]
+```
+
+**Example**
+
+```bash
+curl -H "Authorization: Bearer ghp_..." \
+  "https://your-dispatcher.app/api/branches?q=pplx"
+```
+
+**Errors**
+
+| Status | Meaning |
+|---|---|
+| `401` | PAT missing or invalid |
+| `403` | PAT lacks `Contents: read` permission |
+
+---
+
+## `GET /api/runs`
+
+Returns the 20 most recent workflow runs for `pv-udpv/pplx-lab`.
+
+**Headers**
+
+| Header | Required | Description |
+|---|---|---|
+| `Authorization` | yes | `Bearer <fine-grained-PAT>` |
+
+**Response**
+
+```json
+[
+  {
+    "id": 12345678,
+    "name": "Deploy to pv-cargo",
+    "head_branch": "master",
+    "status": "completed",
+    "conclusion": "success",
+    "actor": { "login": "octocat", "avatar_url": "https://..." },
+    "html_url": "https://github.com/pv-udpv/pplx-lab/actions/runs/12345678",
+    "created_at": "2025-01-15T11:58:00Z",
+    "updated_at": "2025-01-15T12:02:00Z",
+    "run_started_at": "2025-01-15T11:58:10Z"
+  }
+]
+```
+
+**Example**
+
+```bash
+curl -H "Authorization: Bearer ghp_..." \
+  https://your-dispatcher.app/api/runs
+```
+
+---
+
+## `POST /api/dispatch`
+
+Triggers a `workflow_dispatch` event on a workflow in `pv-udpv/pplx-lab`.
+
+**Headers**
+
+| Header | Required | Description |
+|---|---|---|
+| `Authorization` | yes | `Bearer <fine-grained-PAT>` |
+| `Content-Type` | yes | `application/json` |
+
+**Request body** (validated against `dispatchPayloadSchema`)
+
+```json
+{
+  "workflow_file": "deploy-pv-cargo.yml",
+  "workflow_name": "Deploy to pv-cargo",
+  "group": "pv-cargo",
+  "ref": "master",
+  "environment": "",
+  "inputs": {
+    "deploy_wave_403": "false"
+  }
+}
+```
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `workflow_file` | string | yes | `.yml` filename (basename only, e.g. `deploy-pv-cargo.yml`) |
+| `workflow_name` | string | no | Display name (for logging) |
+| `group` | string | no | Group key for logging (`pv-cargo`, `pv-sandbox`, `web`) |
+| `ref` | string | yes | Branch, tag, or SHA to run the workflow on |
+| `environment` | string | no | Environment name passed as a dispatch input |
+| `inputs` | object | no | Key-value map of dispatch input values |
+
+**Response** (201 on success)
+
+```json
+{ "message": "Workflow dispatched successfully" }
+```
+
+**Errors**
+
+| Status | Meaning |
+|---|---|
+| `400` | Request body failed Zod validation |
+| `401` | PAT missing or invalid |
+| `403` | PAT lacks `Actions: write` permission |
+| `404` | Workflow file not found |
+| `422` | `ref` does not exist in the repository |
+
+**Example**
+
+```bash
+curl -X POST https://your-dispatcher.app/api/dispatch \
+  -H "Authorization: Bearer ghp_..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "workflow_file": "deploy-pv-cargo.yml",
+    "ref": "master",
+    "inputs": { "deploy_wave_403": "false" }
+  }'
+```
+
+---
+
+## `POST /api/pr/fork`
+
+Forks `pv-udpv/pplx-lab` (or `pv-udpv/gha-dispatcher`) to the authenticated user's GitHub account if a fork does not already exist. Part of the PR flow.
+
+**Headers**
+
+| Header | Required | Description |
+|---|---|---|
+| `Authorization` | yes | `Bearer <fine-grained-PAT>` |
+| `Content-Type` | yes | `application/json` |
+
+**Request body**
+
+```json
+{
+  "source": "pplx-lab"
+}
+```
+
+| Field | Type | Values | Description |
+|---|---|---|---|
+| `source` | string | `pplx-lab` \| `gha-dispatcher` | Which upstream repo to fork |
+
+**Response**
+
+```json
+{
+  "fork_owner": "your-github-username",
+  "fork_repo": "pplx-lab",
+  "already_existed": false
+}
+```
+
+**Errors**
+
+| Status | Meaning |
+|---|---|
+| `401` | PAT missing or invalid |
+| `403` | PAT lacks `Contents: write` permission on the target org |
+
+---
+
+## `POST /api/pr/commit`
+
+Creates a branch on the user's fork and commits file changes. Call after `/api/pr/fork`.
+
+**Headers**
+
+| Header | Required | Description |
+|---|---|---|
+| `Authorization` | yes | `Bearer <fine-grained-PAT>` |
+| `Content-Type` | yes | `application/json` |
+
+**Request body**
+
+```json
+{
+  "source": "pplx-lab",
+  "branch": "fix/my-workflow-update",
+  "message": "fix: update deploy-pv-cargo inputs",
+  "files": [
+    {
+      "path": ".github/workflows/deploy-pv-cargo.yml",
+      "content": "name: Deploy to pv-cargo\n..."
+    }
+  ]
+}
+```
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `source` | string | yes | `pplx-lab` or `gha-dispatcher` |
+| `branch` | string | yes | New branch name to create on the fork |
+| `message` | string | yes | Commit message |
+| `files` | array | yes | Files to create/update; `content` is the full UTF-8 file content |
+
+**Response**
+
+```json
+{
+  "sha": "abc123def456",
+  "branch": "fix/my-workflow-update"
+}
+```
+
+---
+
+## `POST /api/pr/open`
+
+Opens a pull request from the fork branch to the upstream default branch.
+
+**Headers**
+
+| Header | Required | Description |
+|---|---|---|
+| `Authorization` | yes | `Bearer <fine-grained-PAT>` |
+| `Content-Type` | yes | `application/json` |
+
+**Request body**
+
+```json
+{
+  "source": "pplx-lab",
+  "branch": "fix/my-workflow-update",
+  "title": "fix: update deploy-pv-cargo inputs",
+  "body": "Updated the `deploy_wave_403` default to align with prod."
+}
+```
+
+**Response**
+
+```json
+{
+  "pr_url": "https://github.com/pv-udpv/pplx-lab/pull/42",
+  "pr_number": 42
+}
+```
+
+**Errors**
+
+| Status | Meaning |
+|---|---|
+| `422` | PR already exists for this branch, or branch not found |
+| `403` | PAT lacks `Pull requests: write` permission |

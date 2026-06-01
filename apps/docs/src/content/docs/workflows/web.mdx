@@ -1,0 +1,35 @@
+---
+title: web Workflows
+description: General-purpose web, ADR, and lab workflows — 55 entries covering knowledge graph sync, AGW bootstrap, agent chains, and more.
+---
+
+import WorkflowDetail from '../../../components/WorkflowDetail.astro';
+import workflowsCatalog from '@gha-dispatcher/shared/data/workflows.json';
+
+export const workflows = workflowsCatalog.groups.web;
+
+The **web** group contains **{workflows.length} workflows** covering a wide range of ADR-driven
+automation tasks, AGW (AgentGateway) operations, knowledge-graph syncs, and lab tooling.
+Because of the large count, each workflow is shown in a collapsible block.
+
+## Workflows
+
+{workflows.map(wf => (
+  <WorkflowDetail
+    name={wf.name}
+    path={wf.path}
+    hasDispatch={wf.has_dispatch}
+    inputs={wf.dispatch_inputs}
+    collapsible={true}
+  />
+))}
+
+## Notes
+
+- **ADR-055 KG Sync** — Syncs the Knowledge Graph with the `on-touch` (default) or `full-backfill` mode.
+  Full-backfill is an ops-only operation and should not be scheduled.
+- **AGW Bootstrap / K8s Bootstrap** — One-shot bootstrap workflows for AgentGateway infrastructure.
+  They are idempotent but slow; run only when provisioning a new node.
+- **Agent-Fix Chain** — Autonomous agent loop for diagnosing and fixing issues; requires `task`,
+  `context_uuid`, and optionally `max_iterations`.
+- Workflows with no dispatch inputs run on `branch + environment` defaults only.

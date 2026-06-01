@@ -1,0 +1,140 @@
+---
+title: StackBlitz-style PR Flow
+description: How to edit workflow YAMLs or the dispatcher source and open a PR without leaving the app.
+---
+
+import { Steps, Aside } from '@astrojs/starlight/components';
+
+## Overview
+
+GHA Dispatcher includes a built-in PR flow inspired by StackBlitz's one-click GitHub integration.
+You can edit any workflow YAML in `pv-udpv/pplx-lab` (or any file in the `gha-dispatcher` repo
+itself) using the in-app Monaco editor, then open a pull request — all without leaving the dispatcher.
+
+The flow uses three sequential API calls:
+
+```
+/api/pr/fork   →  fork the upstream repo to your account (idempotent)
+/api/pr/commit →  create a branch on your fork + commit the edited file(s)
+/api/pr/open   →  open a PR from your fork branch → upstream default branch
+```
+
+Your PAT needs `Contents: read+write` and `Pull requests: read+write` on the target repo.
+
+---
+
+## User flow
+
+<Steps>
+
+1. **Click the edit icon** next to any workflow in the dispatcher's workflow list.
+
+   The Monaco editor opens with the raw YAML content fetched from the upstream repo
+   (using `GET /repos/pv-udpv/pplx-lab/contents/.github/workflows/<file>.yml`).
+
+2. **Make your changes** in the editor. The editor provides YAML syntax highlighting and
+   basic schema-aware completion for `workflow_dispatch` inputs.
+
+3. **Click "Save & open PR"**. The app performs the three-step PR dance:
+
+   - Calls `POST /api/pr/fork` — if you haven't already forked the repo, GitHub creates
+     the fork now (this is asynchronous on GitHub's side; the endpoint waits up to 10 s).
+   - Calls `POST /api/pr/commit` — creates a new branch on your fork named
+     `dispatcher/edit/<filename>-<timestamp>` and commits the edited content.
+   - Calls `POST /api/pr/open` — opens a PR from your fork branch to `pv-udpv/pplx-lab:master`.
+
+4. **A toast appears** with a link to the new PR on GitHub. Click it to review, add a description,
+   request reviewers, or merge.
+
+</Steps>
+
+---
+
+## Source toggle
+
+The **Source** dropdown (top right of the editor) lets you target a different repository:
+
+| Setting | Upstream | Fork target |
+|---|---|---|
+| `pplx-lab` (default) | `pv-udpv/pplx-lab` | `<your-user>/pplx-lab` |
+| `gha-dispatcher` | `pv-udpv/gha-dispatcher` | `<your-user>/gha-dispatcher` |
+
+Choosing `gha-dispatcher` lets you edit the dispatcher's own source code (React components,
+Express routes, this docs site) and open a PR back to the dispatcher repo.
+
+---
+
+## Auth & fork dance
+
+```
+Browser                       Express Server              GitHub REST API
+  │                               │                             │
+  │  POST /api/pr/fork            │                             │
+  │  { source: "pplx-lab" }       │                             │
+  │──────────────────────────────►│                             │
+  │                               │  GET /repos/pv-udpv/pplx-lab
+  │                               │  (check if fork exists)     │
+  │                               │────────────────────────────►│
+  │                               │◄────────────────────────────│
+  │                               │                             │
+  │                               │  POST /repos/pv-udpv/pplx-lab/forks
+  │                               │  (only if no fork found)    │
+  │                               │────────────────────────────►│
+  │                               │◄────────────────────────────│
+  │◄──────────────────────────────│                             │
+  │  { fork_owner, fork_repo }    │                             │
+  │                               │                             │
+  │  POST /api/pr/commit          │                             │
+  │  { branch, message, files }   │                             │
+  │──────────────────────────────►│                             │
+  │                               │  GET default branch SHA     │
+  │                               │────────────────────────────►│
+  │                               │◄────────────────────────────│
+  │                               │  POST /repos/<fork>/git/refs│
+  │                               │  (create branch from SHA)   │
+  │                               │────────────────────────────►│
+  │                               │  PUT /repos/<fork>/contents/│
+  │                               │  (create/update file)       │
+  │                               │────────────────────────────►│
+  │◄──────────────────────────────│                             │
+  │  { sha, branch }              │                             │
+  │                               │                             │
+  │  POST /api/pr/open            │                             │
+  │  { branch, title, body }      │                             │
+  │──────────────────────────────►│                             │
+  │                               │  POST /repos/pv-udpv/       │
+  │                               │  pplx-lab/pulls             │
+  │                               │────────────────────────────►│
+  │◄──────────────────────────────│                             │
+  │  { pr_url, pr_number }        │                             │
+  │                               │                             │
+  [Toast: "PR #42 opened" + link]
+```
+
+---
+
+## PAT scopes for PR flow
+
+If your PAT was created with only `Actions: read+write`, the PR flow will fail at the fork step.
+Mint a new token with these additional scopes:
+
+| Scope | Access | Reason |
+|---|---|---|
+| Contents | Read and write | Read the upstream file, create/update files on the fork |
+| Pull requests | Read and write | Open the PR on the upstream repo |
+| Metadata | Read | Required by GitHub for all fine-grained tokens |
+
+<Aside type="caution">
+The `Contents: write` scope on a fork gives your code the ability to push any content to your copy of the repo. The dispatcher uses this only for the single file you edited in the Monaco editor.
+</Aside>
+
+---
+
+## Error handling
+
+| Error | Cause | Fix |
+|---|---|---|
+| `403 on /fork` | PAT lacks `Contents: write` | Remint PAT with Contents permission |
+| `422 on /open` | PR already exists for this branch | Close the existing PR first, or use a new branch name |
+| Fork not ready | GitHub fork creation is async | The server retries for 10 s; if it times out, wait a moment and try again |
+| `404 on contents` | File path typo or file doesn't exist in upstream | Verify the path in the Monaco editor title bar |

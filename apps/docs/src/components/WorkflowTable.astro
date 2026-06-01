@@ -1,0 +1,61 @@
+---
+import workflowsCatalog from '@gha-dispatcher/shared/data/workflows.json';
+
+type GroupKey = 'pv-cargo' | 'pv-sandbox' | 'web';
+interface Props {
+  group?: GroupKey;
+}
+
+const { group } = Astro.props;
+
+interface WorkflowRow {
+  group: string;
+  name: string;
+  path: string;
+  hasDispatch: boolean;
+  inputCount: number;
+}
+
+const rows: WorkflowRow[] = [];
+
+const groups: GroupKey[] = group ? [group] : ['pv-cargo', 'pv-sandbox', 'web'];
+for (const g of groups) {
+  const wfs = (workflowsCatalog.groups as Record<string, any[]>)[g] ?? [];
+  for (const wf of wfs) {
+    rows.push({
+      group: g,
+      name: wf.name,
+      path: wf.path,
+      hasDispatch: wf.has_dispatch,
+      inputCount: wf.dispatch_inputs?.length ?? 0,
+    });
+  }
+}
+---
+
+<table class="workflow-table">
+  <thead>
+    <tr>
+      {!group && <th>Group</th>}
+      <th>Name</th>
+      <th>Path</th>
+      <th>Dispatch?</th>
+      <th># Inputs</th>
+    </tr>
+  </thead>
+  <tbody>
+    {rows.map(row => (
+      <tr>
+        {!group && (
+          <td>
+            <span class={`badge-group ${row.group}`}>{row.group}</span>
+          </td>
+        )}
+        <td>{row.name}</td>
+        <td><code>{row.path.replace('.github/workflows/', '')}</code></td>
+        <td>{row.hasDispatch ? '✓' : '—'}</td>
+        <td>{row.inputCount}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>

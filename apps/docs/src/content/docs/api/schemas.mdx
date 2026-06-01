@@ -1,0 +1,189 @@
+---
+title: API Schemas
+description: TypeScript types and Zod schemas exported from @gha-dispatcher/shared.
+---
+
+import ZodSchemaBlock from '../../../components/ZodSchemaBlock.astro';
+
+All request validation in the GHA Dispatcher backend is done with [Zod](https://zod.dev/).
+The schemas are exported from `@gha-dispatcher/shared` and used by both the server (for validation)
+and the client (for form generation).
+
+## `dispatchPayloadSchema`
+
+Validates the body of `POST /api/dispatch`.
+
+<ZodSchemaBlock schema="dispatchPayload" />
+
+**TypeScript type**
+
+```ts
+import type { DispatchPayload } from '@gha-dispatcher/shared';
+// {
+//   workflow_file: string;       // must match /^[\w.\-]+\.ya?ml$/
+//   workflow_name?: string;
+//   group?: string;
+//   ref: string;
+//   environment?: string;
+//   inputs: Record<string, string | boolean | number>;
+// }
+```
+
+---
+
+## `workflowMetaSchema`
+
+Shape of each entry in `workflowsCatalog.groups[group]`.
+
+<ZodSchemaBlock schema="workflowMeta" />
+
+**TypeScript type**
+
+```ts
+import type { WorkflowMeta } from '@gha-dispatcher/shared';
+// {
+//   name: string;
+//   path: string;
+//   state: string;
+//   dispatch_inputs: DispatchInput[];
+//   has_dispatch: boolean;
+// }
+```
+
+---
+
+## `dispatchInputSchema`
+
+Shape of each element in `WorkflowMeta.dispatch_inputs`.
+
+<ZodSchemaBlock schema="dispatchInput" />
+
+**TypeScript type**
+
+```ts
+import type { DispatchInput } from '@gha-dispatcher/shared';
+// {
+//   name: string;
+//   description: string;
+//   type: 'string' | 'boolean' | 'choice' | 'environment' | 'number';
+//   required: boolean;
+//   default?: string | boolean | null;
+//   options: string[];
+// }
+```
+
+---
+
+## Non-Zod types
+
+These types are pure TypeScript interfaces (no Zod schema — they describe API response shapes):
+
+### `WorkflowInventory`
+
+```ts
+import type { WorkflowInventory, WorkflowGroupKey } from '@gha-dispatcher/shared';
+
+interface WorkflowInventory {
+  owner: string;
+  repo: string;
+  default_branch: string;
+  groups: Record<WorkflowGroupKey, WorkflowMeta[]>;
+}
+
+type WorkflowGroupKey = 'pv-cargo' | 'pv-sandbox' | 'web';
+```
+
+### `RunSummary`
+
+Returned by `GET /api/runs`.
+
+```ts
+import type { RunSummary, RunActor } from '@gha-dispatcher/shared';
+
+interface RunSummary {
+  id: number;
+  name: string;
+  head_branch: string;
+  status: string | null;       // 'queued' | 'in_progress' | 'completed'
+  conclusion: string | null;   // 'success' | 'failure' | 'cancelled' | null
+  actor: RunActor | null;
+  html_url: string;
+  created_at: string;
+  updated_at: string;
+  run_started_at: string | null;
+}
+
+interface RunActor {
+  login: string;
+  avatar_url: string;
+}
+```
+
+### `BranchSummary`
+
+Returned by `GET /api/branches`.
+
+```ts
+import type { BranchSummary } from '@gha-dispatcher/shared';
+
+interface BranchSummary {
+  name: string;
+}
+```
+
+### `DispatchLogRow`
+
+A row in `gha_dispatcher.dispatch_log` (Supabase).
+
+```ts
+import type { DispatchLogRow } from '@gha-dispatcher/shared';
+
+interface DispatchLogRow {
+  id: number;
+  user_login: string | null;
+  repo_slug: string | null;
+  repo_full: string | null;
+  workflow_id: string | null;
+  workflow_name: string | null;
+  ref: string | null;
+  environment: string | null;
+  inputs: Record<string, unknown> | null;
+  run_id: number | null;
+  run_url: string | null;
+  status: string;          // 'dispatched' | 'failed' | 'error'
+  error: string | null;
+  created_at: string;
+}
+```
+
+---
+
+## Importing from `@gha-dispatcher/shared`
+
+```ts
+// Named schema imports
+import {
+  dispatchInputSchema,
+  workflowMetaSchema,
+  dispatchPayloadSchema,
+} from '@gha-dispatcher/shared';
+
+// Named type imports
+import type {
+  DispatchInput,
+  WorkflowMeta,
+  WorkflowGroupKey,
+  WorkflowInventory,
+  DispatchPayload,
+  RunActor,
+  RunSummary,
+  DispatchLogRow,
+  BranchSummary,
+} from '@gha-dispatcher/shared';
+
+// Bundled workflow catalog
+import { workflowsCatalog } from '@gha-dispatcher/shared';
+// workflowsCatalog.groups['pv-cargo']  → WorkflowMeta[]
+// workflowsCatalog.groups['pv-sandbox'] → WorkflowMeta[]
+// workflowsCatalog.groups.web          → WorkflowMeta[]
+```

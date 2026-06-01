@@ -1,0 +1,160 @@
+---
+title: Local Development
+description: How to run the GHA Dispatcher monorepo locally — web app, docs site, and shared package.
+---
+
+import { Steps, Aside } from '@astrojs/starlight/components';
+
+## Prerequisites
+
+- **Node.js 20+** (LTS recommended)
+- **pnpm 9+** — install with `npm install -g pnpm@9`
+- A fine-grained GitHub PAT (see [Quick Start](/quick-start/))
+
+## Clone and install
+
+<Steps>
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/pv-udpv/gha-dispatcher.git
+   cd gha-dispatcher
+   ```
+
+2. Install all workspace dependencies from the repo root:
+
+   ```bash
+   pnpm install
+   ```
+
+   This installs `apps/web`, `apps/docs`, `packages/shared`, and all their dependencies in a single pass.
+
+</Steps>
+
+## Environment variables
+
+Copy the example env file for the web app:
+
+```bash
+cp apps/web/.env.example apps/web/.env
+```
+
+Fill in the values:
+
+```bash
+# apps/web/.env
+
+# Supabase project credentials (get from Supabase dashboard → Settings → API)
+SUPABASE_URL=https://xxxxxxxxxxxx.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOi...
+
+# Optional: default repo to dispatch to (defaults to pv-udpv/pplx-lab)
+GITHUB_REPO_OWNER=pv-udpv
+GITHUB_REPO_NAME=pplx-lab
+```
+
+<Aside type="note">
+The web app will start without Supabase credentials — dispatch events just won't be logged.
+GitHub API calls use the PAT from the browser, not from the `.env` file.
+</Aside>
+
+## Running the web app
+
+```bash
+pnpm dev
+# or
+pnpm --filter @gha-dispatcher/web dev
+```
+
+This starts:
+- **Vite dev server** on `http://localhost:5173` (React SPA with HMR)
+- **Express API server** on `http://localhost:3001` (proxied by Vite)
+
+Open `http://localhost:5173` in your browser, paste your PAT, and start dispatching.
+
+## Running the docs site
+
+```bash
+pnpm dev:docs
+# or
+pnpm --filter @gha-dispatcher/docs dev
+```
+
+Opens `http://localhost:4321` — Astro's dev server with HMR. MDX pages and Astro components
+hot-reload on save.
+
+## Building
+
+### Web app
+
+```bash
+pnpm --filter @gha-dispatcher/web build
+```
+
+Output:
+- `apps/web/dist/public/` — Vite-bundled React SPA
+- `apps/web/dist/index.cjs` — esbuild-bundled Express server
+
+### Docs site
+
+```bash
+pnpm --filter @gha-dispatcher/docs build
+```
+
+Output: `apps/docs/dist/` — fully static HTML/CSS/JS, ready for any CDN.
+
+### All packages
+
+```bash
+pnpm build
+# runs turbo build across all packages in dependency order
+```
+
+## Turbo pipeline
+
+`turbo.json` defines the task graph:
+
+```json
+{
+  "pipeline": {
+    "build": { "dependsOn": ["^build"], "outputs": ["dist/**"] },
+    "dev":   { "cache": false, "persistent": true },
+    "lint":  {},
+    "typecheck": {}
+  }
+}
+```
+
+`pnpm build` runs `packages/shared` before `apps/web` and `apps/docs` (due to `^build` dependency).
+
+## Updating the workflow catalog
+
+The workflow catalog (`packages/shared/src/data/workflows.json`) is a static snapshot.
+To refresh it from the live GitHub API:
+
+```bash
+# from apps/web — requires a valid .env with GITHUB credentials
+node scripts/refresh-catalog.mjs
+```
+
+Then commit the updated `workflows.json`. Both the web app and docs site will pick up the new data on the next build.
+
+## Typecheck & lint
+
+```bash
+pnpm typecheck   # tsc --noEmit across all packages
+pnpm lint        # eslint across all packages (where configured)
+```
+
+## Project scripts reference
+
+| Command | Description |
+|---|---|
+| `pnpm dev` | Start web app dev server |
+| `pnpm dev:docs` | Start docs dev server |
+| `pnpm build` | Build all packages |
+| `pnpm --filter @gha-dispatcher/web build` | Build web app only |
+| `pnpm --filter @gha-dispatcher/docs build` | Build docs only |
+| `pnpm typecheck` | Run TypeScript type-check |
+| `pnpm lint` | Run ESLint |

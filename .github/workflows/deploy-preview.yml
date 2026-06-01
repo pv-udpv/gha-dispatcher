@@ -1,0 +1,32 @@
+# deploy-preview.yml — placeholder for preview deployments on pull requests.
+#
+# TODO (PR-flow subagent): wire this up to the pplx.app deploy pipeline.
+#
+# Suggested approach:
+#   1. On pull_request (opened / synchronize), trigger a preview build.
+#   2. Run `pnpm --filter @gha-dispatcher/web build` to produce dist/.
+#   3. Deploy dist/ to a preview URL (e.g. via the pplx.app CLI or Vercel CLI).
+#   4. Post the preview URL as a PR comment using actions/github-script.
+#
+# Required secrets:
+#   - PPLX_DEPLOY_TOKEN  (or VERCEL_TOKEN if using Vercel)
+#   - SUPABASE_URL
+#   - SUPABASE_ANON_KEY
+#
+# name: Deploy Preview
+# on:
+#   pull_request:
+#     types: [opened, synchronize]
+# jobs:
+#   deploy-preview:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v4
+#       - uses: pnpm/action-setup@v4
+#         with: { version: 9 }
+#       - uses: actions/setup-node@v4
+#         with: { node-version: 20, cache: pnpm }
+#       - run: pnpm install --frozen-lockfile
+#       - run: pnpm --filter @gha-dispatcher/web build
+#       - name: Deploy to preview
+#         run: echo "TODO: wire deploy command here"

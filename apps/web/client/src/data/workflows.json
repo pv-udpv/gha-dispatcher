@@ -1,0 +1,1632 @@
+{
+  "owner": "pv-udpv",
+  "repo": "pv-udpv/pplx-lab",
+  "default_branch": "master",
+  "groups": {
+    "pv-cargo": [
+      {
+        "name": "Deploy pplx-rest-mcp to pv-cargo",
+        "path": ".github/workflows/deploy-pplx-rest-mcp.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "branch",
+            "description": "Branch to deploy from",
+            "type": "string",
+            "required": true,
+            "default": "pplx/feat/pplx-rest-proxy",
+            "options": []
+          },
+          {
+            "name": "reload_agentgateway",
+            "description": "Reload AgentGateway after MCP config sync",
+            "type": "boolean",
+            "required": false,
+            "default": "True",
+            "options": []
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "Deploy to pv-cargo",
+        "path": ".github/workflows/deploy-pv-cargo.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "deploy_wave_403",
+            "description": "Deploy Wave-403 pydantic-ai supervisor to pv-cargo",
+            "type": "boolean",
+            "required": false,
+            "default": "False",
+            "options": []
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "Experiment Engine \u2014 Self-Hosted",
+        "path": ".github/workflows/experiment-engine.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "task",
+            "description": "Task to run",
+            "type": "choice",
+            "required": true,
+            "default": "",
+            "options": [
+              "smoke-test",
+              "lint",
+              "run-experiment",
+              "sync-supabase",
+              "collect-evidence"
+            ]
+          },
+          {
+            "name": "experiment_id",
+            "description": "Experiment ID (for run-experiment/collect-evidence)",
+            "type": "string",
+            "required": false,
+            "default": "",
+            "options": []
+          },
+          {
+            "name": "context_uuid",
+            "description": "Thread context_uuid (for run-experiment)",
+            "type": "string",
+            "required": false,
+            "default": "",
+            "options": []
+          },
+          {
+            "name": "extra_args",
+            "description": "Extra arguments passed to the task",
+            "type": "string",
+            "required": false,
+            "default": "",
+            "options": []
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "Fix AGW A2A config and deploy CLI runners",
+        "path": ".github/workflows/a2a-agw-fix.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "deploy_cli_runners",
+            "description": "Deploy claude-code and codex-cli A2A nodes",
+            "type": "boolean",
+            "required": false,
+            "default": "True",
+            "options": []
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "MCP Smoke \u2014 pv-cargo",
+        "path": ".github/workflows/mcp-smoke-pvcargo.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "no_tool_call",
+            "description": "Skip remote-run tool_call check (port+health only)",
+            "type": "choice",
+            "required": false,
+            "default": "false",
+            "options": [
+              "false",
+              "true"
+            ]
+          },
+          {
+            "name": "skip_drift",
+            "description": "Skip unit-drift-check (smoke only)",
+            "type": "choice",
+            "required": false,
+            "default": "false",
+            "options": [
+              "false",
+              "true"
+            ]
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "Discover pv-cargo",
+        "path": ".github/workflows/discover-pv-cargo.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "Inspect pv-cargo MCP topology",
+        "path": ".github/workflows/inspect-pv-cargo.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "Probe pv-cargo LLM proxy",
+        "path": ".github/workflows/probe-pv-cargo.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": true
+      },
+      {
+        "name": "Runner gitconfig cleanup",
+        "path": ".github/workflows/runner-gitconfig-cleanup.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "Tailscale ACL",
+        "path": ".github/workflows/tailscale-acl.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "Test pv-cargo runner",
+        "path": ".github/workflows/test-selfhosted.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      }
+    ],
+    "pv-sandbox": [
+      {
+        "name": "Authorize Sandbox Key",
+        "path": ".github/workflows/authorize-sandbox.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "pubkey",
+            "description": "SSH public key to authorize on pv-cargo for user pv",
+            "type": "string",
+            "required": true,
+            "default": "",
+            "options": []
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "Nebula cert \u2014 sign sandbox node",
+        "path": ".github/workflows/nebula-cert.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "sandbox_id",
+            "description": "Sandbox identifier (e.g. sbx-042, pv-cargo)",
+            "type": "string",
+            "required": true,
+            "default": "",
+            "options": []
+          },
+          {
+            "name": "nebula_ip",
+            "description": "Nebula overlay IP to assign (e.g. 10.42.0.50/24)",
+            "type": "string",
+            "required": true,
+            "default": "10.42.0.50/24",
+            "options": []
+          },
+          {
+            "name": "groups",
+            "description": "Comma-separated Nebula groups",
+            "type": "string",
+            "required": false,
+            "default": "sandbox",
+            "options": []
+          },
+          {
+            "name": "duration",
+            "description": "Certificate validity duration",
+            "type": "string",
+            "required": false,
+            "default": "24h",
+            "options": []
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "Sandbox SSH Provision",
+        "path": ".github/workflows/sandbox-provision.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "sandbox_id",
+            "description": "E2B sandbox ID to provision",
+            "type": "string",
+            "required": true,
+            "default": "",
+            "options": []
+          }
+        ],
+        "has_dispatch": true
+      }
+    ],
+    "web": [
+      {
+        "name": "ADR-055 KG Sync (0_ protocol)",
+        "path": ".github/workflows/adr-055-kg-sync.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "dry_run",
+            "description": "Dry run (print changes without writing to DB)",
+            "type": "choice",
+            "required": false,
+            "default": "false",
+            "options": [
+              "false",
+              "true"
+            ]
+          },
+          {
+            "name": "backfill_mode",
+            "description": "Sync mode. on-touch (default): edges written only when entity content changed. full-backfill: retroactive pass over all entities (ops-only, never available to scheduled cron).\n",
+            "type": "choice",
+            "required": false,
+            "default": "on-touch",
+            "options": [
+              "on-touch",
+              "full-backfill"
+            ]
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "Agent-Fix Chain",
+        "path": ".github/workflows/agent-fix.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "issue_number",
+            "description": "GitHub issue number to fix (body becomes chain goal)",
+            "type": "string",
+            "required": true,
+            "default": "",
+            "options": []
+          },
+          {
+            "name": "plan",
+            "description": "agent_runner plan name",
+            "type": "choice",
+            "required": false,
+            "default": "dual-agent-review",
+            "options": [
+              "dual-agent-review",
+              "full-cycle",
+              "tiered-research"
+            ]
+          },
+          {
+            "name": "space_uuid",
+            "description": "X-Pplx-Space UUID (for thread scoping)",
+            "type": "string",
+            "required": false,
+            "default": "954c3e4b-1928-49dc-b5a9-84f32f9359b4",
+            "options": []
+          },
+          {
+            "name": "badge",
+            "description": "X-Pplx-Badge label shown in the Perplexity UI",
+            "type": "string",
+            "required": false,
+            "default": "agent-fix",
+            "options": []
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "AGW Bootstrap (ZBS-67/69)",
+        "path": ".github/workflows/agw-bootstrap.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "sandbox_pubkey",
+            "description": "Sandbox SSH public key to authorize",
+            "type": "string",
+            "required": false,
+            "default": "",
+            "options": []
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "AGW K8s Bootstrap (ADR-097) \u2014 lazy validate",
+        "path": ".github/workflows/agw-k8s-bootstrap.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "intent",
+            "description": "Intent to lazy-run (or \"all\" for every intent)",
+            "type": "choice",
+            "required": false,
+            "default": "all",
+            "options": [
+              "all",
+              "local-minikube",
+              "e2b-tailnet-mcp",
+              "vault-secrets",
+              "ci-quality-gate",
+              "pplx-dxt-source",
+              "debug-401-503",
+              "e2b-tsnet-mcp",
+              "ingress-cf-dns",
+              "tsnet-funnel"
+            ]
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "Break-glass recover agentgateway",
+        "path": ".github/workflows/recover-agentgateway.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "reason",
+            "description": "Recovery reason / context",
+            "type": "string",
+            "required": false,
+            "default": "manual break-glass",
+            "options": []
+          },
+          {
+            "name": "probe_after",
+            "description": "Run probes after recovery",
+            "type": "string",
+            "required": false,
+            "default": "true",
+            "options": []
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "CG Direct Upsert (one-off)",
+        "path": ".github/workflows/cg-upsert-once.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "since",
+            "description": "Upsert nodes captured >= date (YYYY-MM-DD)",
+            "type": "string",
+            "required": false,
+            "default": "2026-05-13",
+            "options": []
+          },
+          {
+            "name": "all_nodes",
+            "description": "Upsert all nodes (ignore --since)",
+            "type": "boolean",
+            "required": false,
+            "default": "False",
+            "options": []
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "comet-pipeline",
+        "path": ".github/workflows/comet-pipeline.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "force_version",
+            "description": "Force a specific Comet version (skips ingest no-op check)",
+            "type": "string",
+            "required": false,
+            "default": "",
+            "options": []
+          },
+          {
+            "name": "skip_ingest",
+            "description": "Reuse existing api_surface.json (skip CRX ingest)",
+            "type": "boolean",
+            "required": false,
+            "default": "False",
+            "options": []
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "Control Tower \u2014 Automerge",
+        "path": ".github/workflows/automerge.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "dry_run",
+            "description": "Dry run (log only, no merge)",
+            "type": "boolean",
+            "required": false,
+            "default": "False",
+            "options": []
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "Deploy plugin-mcp to Supabase",
+        "path": ".github/workflows/deploy-plugin-mcp.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "force",
+            "description": "Force re-deploy",
+            "type": "boolean",
+            "required": false,
+            "default": "True",
+            "options": []
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "Deploy pplx-proxy to Supabase",
+        "path": ".github/workflows/deploy-pplx-proxy.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "force",
+            "description": "Skip the /healthz version-diff gate (force re-deploy)",
+            "type": "boolean",
+            "required": false,
+            "default": "False",
+            "options": []
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "Fleet E2E (ADR-048)",
+        "path": ".github/workflows/fleet-e2e.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "include_waven",
+            "description": "Include H4 (Wave-N BA smoke, ~2min)",
+            "type": "choice",
+            "required": false,
+            "default": "1",
+            "options": [
+              "0",
+              "1"
+            ]
+          },
+          {
+            "name": "pytest_k",
+            "description": "pytest -k expression (empty = all hops)",
+            "type": "string",
+            "required": false,
+            "default": "",
+            "options": []
+          },
+          {
+            "name": "pytest_extra",
+            "description": "Extra pytest args (default: -v -rs to print skip reasons)",
+            "type": "string",
+            "required": false,
+            "default": "-v -rs",
+            "options": []
+          },
+          {
+            "name": "deploy_before_run",
+            "description": "Sync /home/pv/pplx-lab to this branch+SHA and restart agentgateway before the hop matrix",
+            "type": "choice",
+            "required": false,
+            "default": "0",
+            "options": [
+              "0",
+              "1"
+            ]
+          },
+          {
+            "name": "install_node",
+            "description": "Install Node.js 22 on the runner (enables H0b @modelcontextprotocol/conformance; v22+ required for fs.globSync)",
+            "type": "choice",
+            "required": false,
+            "default": "1",
+            "options": [
+              "0",
+              "1"
+            ]
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "hf-artifacts",
+        "path": ".github/workflows/hf-artifacts.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "force-refresh",
+            "description": "Force re-download even if cache key matches",
+            "type": "boolean",
+            "required": false,
+            "default": "False",
+            "options": []
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "KG Curator Promote",
+        "path": ".github/workflows/kg-curator-promote.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "min_confidence",
+            "description": "Minimum confidence threshold for promotion",
+            "type": "string",
+            "required": false,
+            "default": "0.80",
+            "options": []
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "KG Embedding Backfill",
+        "path": ".github/workflows/kg-backfill.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "batch_size",
+            "description": "Batch size for embedding generation",
+            "type": "string",
+            "required": false,
+            "default": "100",
+            "options": []
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "KG Embeddings Backfill",
+        "path": ".github/workflows/embed-backfill.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "force",
+            "description": "Re-embed all entities (even with existing embeddings)",
+            "type": "boolean",
+            "required": false,
+            "default": "False",
+            "options": []
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "KG Embeddings Backfill (HF Inference)",
+        "path": ".github/workflows/embed-backfill-hf.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "force",
+            "description": "Re-embed all entities (even with existing embeddings)",
+            "type": "boolean",
+            "required": false,
+            "default": "False",
+            "options": []
+          },
+          {
+            "name": "batch_size",
+            "description": "HF Inference batch size",
+            "type": "string",
+            "required": false,
+            "default": "32",
+            "options": []
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "ligolo-proxy-start",
+        "path": ".github/workflows/ligolo-proxy-start.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "port",
+            "description": "Listen port",
+            "type": "string",
+            "required": false,
+            "default": "11601",
+            "options": []
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "Load test \u2014 llm-proxy",
+        "path": ".github/workflows/load-test.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "users",
+            "description": "Number of concurrent users",
+            "type": "string",
+            "required": true,
+            "default": "10",
+            "options": []
+          },
+          {
+            "name": "spawn_rate",
+            "description": "Users spawned per second",
+            "type": "string",
+            "required": true,
+            "default": "2",
+            "options": []
+          },
+          {
+            "name": "run_time",
+            "description": "Test duration (e.g. 30s, 2m)",
+            "type": "string",
+            "required": true,
+            "default": "30s",
+            "options": []
+          },
+          {
+            "name": "proxy_url",
+            "description": "llm-proxy base URL",
+            "type": "string",
+            "required": false,
+            "default": "http://localhost:8880",
+            "options": []
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "pplx-monitor",
+        "path": ".github/workflows/pplx-monitor.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "window_days",
+            "description": "Lookback window in days",
+            "type": "string",
+            "required": false,
+            "default": "7",
+            "options": []
+          },
+          {
+            "name": "dry_run",
+            "description": "Build artifacts but skip Resend + beacon tag",
+            "type": "boolean",
+            "required": false,
+            "default": "False",
+            "options": []
+          },
+          {
+            "name": "skip_if_recent",
+            "description": "Abort if another runner just emitted a digest",
+            "type": "boolean",
+            "required": false,
+            "default": "False",
+            "options": []
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "Release",
+        "path": ".github/workflows/release.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "package",
+            "description": "Package name (e.g. fs_bridge, pplx-lab-bundle)",
+            "type": "string",
+            "required": true,
+            "default": "",
+            "options": []
+          },
+          {
+            "name": "version",
+            "description": "SemVer X.Y.Z to release",
+            "type": "string",
+            "required": true,
+            "default": "",
+            "options": []
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "SPA Corpus \u2014 full pipeline",
+        "path": ".github/workflows/spa-corpus-pipeline.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "bundle_source",
+            "description": "Bundle source: fetch (live from perplexity.ai) | local (use research/extracted/comet/latest)",
+            "type": "choice",
+            "required": false,
+            "default": "fetch",
+            "options": [
+              "fetch",
+              "local"
+            ]
+          },
+          {
+            "name": "version",
+            "description": "Fallback version tag if meta absent",
+            "type": "string",
+            "required": false,
+            "default": "unknown",
+            "options": []
+          },
+          {
+            "name": "hf_repo",
+            "description": "HF dataset repo",
+            "type": "string",
+            "required": false,
+            "default": "ormwish/pplx-lab",
+            "options": []
+          },
+          {
+            "name": "skip_embed",
+            "description": "Skip embedding stage (faster, no vectors)",
+            "type": "boolean",
+            "required": false,
+            "default": "False",
+            "options": []
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "SPA Corpus \u2014 upload to HF",
+        "path": ".github/workflows/spa-corpus-upload.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "version",
+            "description": "Fallback version if meta tag absent",
+            "type": "string",
+            "required": false,
+            "default": "bb36baf",
+            "options": []
+          },
+          {
+            "name": "hf_repo",
+            "description": "HF dataset repo",
+            "type": "string",
+            "required": false,
+            "default": "ormwish/pplx-lab",
+            "options": []
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "Spec Codegen Pipeline",
+        "path": ".github/workflows/spec-codegen.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "force_crx_update",
+            "description": "Force CRX re-download even if version unchanged",
+            "type": "boolean",
+            "required": false,
+            "default": "false",
+            "options": []
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "Validate agentgateway config (proposed)",
+        "path": ".github/workflows/validate-config.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "branch",
+            "description": "",
+            "type": "string",
+            "required": false,
+            "default": "feat/expose-pplx-tools-mcp",
+            "options": []
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "workflows-mcp-handoff",
+        "path": ".github/workflows/workflows-mcp-handoff.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "zone",
+            "description": "Apex zone",
+            "type": "string",
+            "required": false,
+            "default": "zbst.tech",
+            "options": []
+          },
+          {
+            "name": "hostname",
+            "description": "Public hostname",
+            "type": "string",
+            "required": false,
+            "default": "workflows-mcp.zbst.tech",
+            "options": []
+          },
+          {
+            "name": "tunnel_name",
+            "description": "Cloudflare tunnel name",
+            "type": "string",
+            "required": false,
+            "default": "pplx-workflows-mcp",
+            "options": []
+          },
+          {
+            "name": "run_minutes",
+            "description": "How long to hold the tunnel running (max ~330 on GHA free)",
+            "type": "string",
+            "required": false,
+            "default": "300",
+            "options": []
+          },
+          {
+            "name": "skip_bootstrap",
+            "description": "Skip bootstrap job (use existing CF_TUNNEL_TOKEN)",
+            "type": "boolean",
+            "required": false,
+            "default": "False",
+            "options": []
+          },
+          {
+            "name": "skip_register",
+            "description": "Skip Perplexity source registration",
+            "type": "boolean",
+            "required": false,
+            "default": "False",
+            "options": []
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "ADR-055 0_ lint",
+        "path": ".github/workflows/adr-055-lint.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "ADR-055 export check",
+        "path": ".github/workflows/adr-055-export.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "AGW MCP backend diagnostics",
+        "path": ".github/workflows/agw-mcp-diag.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "AGW Smoke (ZBS-98)",
+        "path": ".github/workflows/agw-smoke.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": true
+      },
+      {
+        "name": "architecture-explorer",
+        "path": ".github/workflows/architecture-explorer.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "Check agentgateway version + http target docs",
+        "path": ".github/workflows/check-agw.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "claude-plugin-to-fastmcp",
+        "path": ".github/workflows/claude-plugin-to-fastmcp.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "Copilot Setup",
+        "path": ".github/workflows/copilot-setup-steps.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "D2 Render \u2014 ADR-054",
+        "path": ".github/workflows/d2-render.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "diff-smoke-v3 nightly",
+        "path": ".github/workflows/diff-smoke-v3-nightly.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": true
+      },
+      {
+        "name": "Gitleaks Repo Scan",
+        "path": ".github/workflows/gitleaks.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "Inspect gateway-pplx-tools app.py",
+        "path": ".github/workflows/inspect-mcp-app.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "OTEL Bring-up (Track-2)",
+        "path": ".github/workflows/otel-bringup.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "plugins-validate",
+        "path": ".github/workflows/plugins-validate.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "pplx-rest-mcp CI",
+        "path": ".github/workflows/pplx-rest-mcp-ci.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "pplx_gha / tests",
+        "path": ".github/workflows/test-pplx-gha.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "pplx_unified CI",
+        "path": ".github/workflows/pplx-unified-ci.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "Probe :3085 MCP init (follow redirects)",
+        "path": ".github/workflows/probe-3085-init.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": true
+      },
+      {
+        "name": "Probe :3085 MCP server",
+        "path": ".github/workflows/probe-3085.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": true
+      },
+      {
+        "name": "Probe pplx-tools stdio mode",
+        "path": ".github/workflows/probe-stdio.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": true
+      },
+      {
+        "name": "release-on-tag",
+        "path": ".github/workflows/release-on-tag.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "release-tag-preflight",
+        "path": ".github/workflows/release-tag-preflight.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "Skill Manifest Validate (ADR-096)",
+        "path": ".github/workflows/skill-manifest-validate.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "Smoke pplx-tools MCP target",
+        "path": ".github/workflows/smoke-pplx-tools.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": true
+      },
+      {
+        "name": "spec-coherence",
+        "path": ".github/workflows/spec-coherence.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "SSH Scripts Lint",
+        "path": ".github/workflows/ssh-lint.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "Test Collection",
+        "path": ".github/workflows/test-collect.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "Test gha-log-extractor",
+        "path": ".github/workflows/test-gha-log-extractor.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "Tests",
+        "path": ".github/workflows/test.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "wave-n-supervisor / tests",
+        "path": ".github/workflows/wave-n-supervisor-tests.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      }
+    ]
+  },
+  "recent_runs": [
+    {
+      "id": 26617347195,
+      "name": "pplx-unified-ci",
+      "head_branch": "pplx/docs/briefing-2026-05-29",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "actor": {
+        "login": "pv-udpv"
+      },
+      "html_url": "https://github.com/pv-udpv/pplx-lab/actions/runs/26617347195",
+      "created_at": "2026-05-29T04:41:06Z",
+      "updated_at": "2026-05-29T04:43:42Z",
+      "run_started_at": "2026-05-29T04:41:06Z",
+      "repo": "pv-udpv/pplx-lab",
+      "pr_number": 1000,
+      "note": "Reconstructed from PR check runs via pull_request_read:get_check_runs; actor/event inferred from PR data; workflow file mapping is approximate"
+    },
+    {
+      "id": 26617347160,
+      "name": "Gitleaks Secret Scan",
+      "head_branch": "pplx/docs/briefing-2026-05-29",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "actor": {
+        "login": "pv-udpv"
+      },
+      "html_url": "https://github.com/pv-udpv/pplx-lab/actions/runs/26617347160",
+      "created_at": "2026-05-29T04:41:06Z",
+      "updated_at": "2026-05-29T04:41:40Z",
+      "run_started_at": "2026-05-29T04:41:06Z",
+      "repo": "pv-udpv/pplx-lab",
+      "pr_number": 1000,
+      "note": "Reconstructed from PR check runs via pull_request_read:get_check_runs; actor/event inferred from PR data; workflow file mapping is approximate"
+    },
+    {
+      "id": 26617347157,
+      "name": "Test Collect",
+      "head_branch": "pplx/docs/briefing-2026-05-29",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "actor": {
+        "login": "pv-udpv"
+      },
+      "html_url": "https://github.com/pv-udpv/pplx-lab/actions/runs/26617347157",
+      "created_at": "2026-05-29T04:40:17Z",
+      "updated_at": "2026-05-29T04:41:04Z",
+      "run_started_at": "2026-05-29T04:40:17Z",
+      "repo": "pv-udpv/pplx-lab",
+      "pr_number": 1000,
+      "note": "Reconstructed from PR check runs via pull_request_read:get_check_runs; actor/event inferred from PR data; workflow file mapping is approximate"
+    },
+    {
+      "id": 26617349521,
+      "name": "Copilot PR Review",
+      "head_branch": "pplx/docs/briefing-2026-05-29",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "actor": {
+        "login": "pv-udpv"
+      },
+      "html_url": "https://github.com/pv-udpv/pplx-lab/actions/runs/26617349521",
+      "created_at": "2026-05-29T04:07:43Z",
+      "updated_at": "2026-05-29T04:07:44Z",
+      "run_started_at": "2026-05-29T04:07:43Z",
+      "repo": "pv-udpv/pplx-lab",
+      "pr_number": 1000,
+      "note": "Reconstructed from PR check runs via pull_request_read:get_check_runs; actor/event inferred from PR data; workflow file mapping is approximate"
+    },
+    {
+      "id": 26617337435,
+      "name": "Test Collect",
+      "head_branch": "pplx/docs/briefing-2026-05-29",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "actor": {
+        "login": "pv-udpv"
+      },
+      "html_url": "https://github.com/pv-udpv/pplx-lab/actions/runs/26617337435",
+      "created_at": "2026-05-29T04:07:20Z",
+      "updated_at": "2026-05-29T04:08:03Z",
+      "run_started_at": "2026-05-29T04:07:20Z",
+      "repo": "pv-udpv/pplx-lab",
+      "pr_number": 1000,
+      "note": "Reconstructed from PR check runs via pull_request_read:get_check_runs; actor/event inferred from PR data; workflow file mapping is approximate"
+    },
+    {
+      "id": 26617337400,
+      "name": "pplx-unified-ci",
+      "head_branch": "pplx/docs/briefing-2026-05-29",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "failure",
+      "actor": {
+        "login": "pv-udpv"
+      },
+      "html_url": "https://github.com/pv-udpv/pplx-lab/actions/runs/26617337400",
+      "created_at": "2026-05-29T04:07:20Z",
+      "updated_at": "2026-05-29T04:41:45Z",
+      "run_started_at": "2026-05-29T04:07:20Z",
+      "repo": "pv-udpv/pplx-lab",
+      "pr_number": 1000,
+      "note": "Reconstructed from PR check runs via pull_request_read:get_check_runs; actor/event inferred from PR data; workflow file mapping is approximate"
+    },
+    {
+      "id": 26554010799,
+      "name": "Gitleaks Secret Scan",
+      "head_branch": "pplx/docs/briefing-2026-05-28",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "actor": {
+        "login": "pv-udpv"
+      },
+      "html_url": "https://github.com/pv-udpv/pplx-lab/actions/runs/26554010799",
+      "created_at": "2026-05-28T04:07:30Z",
+      "updated_at": "2026-05-28T04:08:03Z",
+      "run_started_at": "2026-05-28T04:07:30Z",
+      "repo": "pv-udpv/pplx-lab",
+      "pr_number": 999,
+      "note": "Reconstructed from PR check runs via pull_request_read:get_check_runs; actor/event inferred from PR data; workflow file mapping is approximate"
+    },
+    {
+      "id": 26554010829,
+      "name": "Test Collect",
+      "head_branch": "pplx/docs/briefing-2026-05-28",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "actor": {
+        "login": "pv-udpv"
+      },
+      "html_url": "https://github.com/pv-udpv/pplx-lab/actions/runs/26554010829",
+      "created_at": "2026-05-28T04:06:52Z",
+      "updated_at": "2026-05-28T04:07:17Z",
+      "run_started_at": "2026-05-28T04:06:52Z",
+      "repo": "pv-udpv/pplx-lab",
+      "pr_number": 999,
+      "note": "Reconstructed from PR check runs via pull_request_read:get_check_runs; actor/event inferred from PR data; workflow file mapping is approximate"
+    },
+    {
+      "id": 26554010809,
+      "name": "pplx-unified-ci",
+      "head_branch": "pplx/docs/briefing-2026-05-28",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "failure",
+      "actor": {
+        "login": "pv-udpv"
+      },
+      "html_url": "https://github.com/pv-udpv/pplx-lab/actions/runs/26554010809",
+      "created_at": "2026-05-28T04:06:16Z",
+      "updated_at": "2026-05-28T04:41:51Z",
+      "run_started_at": "2026-05-28T04:06:16Z",
+      "repo": "pv-udpv/pplx-lab",
+      "pr_number": 999,
+      "note": "Reconstructed from PR check runs via pull_request_read:get_check_runs; actor/event inferred from PR data; workflow file mapping is approximate"
+    },
+    {
+      "id": 26554004795,
+      "name": "pplx-unified-ci",
+      "head_branch": "pplx/docs/briefing-2026-05-28",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "actor": {
+        "login": "pv-udpv"
+      },
+      "html_url": "https://github.com/pv-udpv/pplx-lab/actions/runs/26554004795",
+      "created_at": "2026-05-28T04:05:19Z",
+      "updated_at": "2026-05-28T04:07:48Z",
+      "run_started_at": "2026-05-28T04:05:19Z",
+      "repo": "pv-udpv/pplx-lab",
+      "pr_number": 999,
+      "note": "Reconstructed from PR check runs via pull_request_read:get_check_runs; actor/event inferred from PR data; workflow file mapping is approximate"
+    },
+    {
+      "id": 26554004740,
+      "name": "Test Collect",
+      "head_branch": "pplx/docs/briefing-2026-05-28",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "actor": {
+        "login": "pv-udpv"
+      },
+      "html_url": "https://github.com/pv-udpv/pplx-lab/actions/runs/26554004740",
+      "created_at": "2026-05-28T04:05:19Z",
+      "updated_at": "2026-05-28T04:06:06Z",
+      "run_started_at": "2026-05-28T04:05:19Z",
+      "repo": "pv-udpv/pplx-lab",
+      "pr_number": 999,
+      "note": "Reconstructed from PR check runs via pull_request_read:get_check_runs; actor/event inferred from PR data; workflow file mapping is approximate"
+    },
+    {
+      "id": 26490073254,
+      "name": "Gitleaks Secret Scan",
+      "head_branch": "pplx/docs/briefing-2026-05-27",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "actor": {
+        "login": "pv-udpv"
+      },
+      "html_url": "https://github.com/pv-udpv/pplx-lab/actions/runs/26490073254",
+      "created_at": "2026-05-27T04:07:25Z",
+      "updated_at": "2026-05-27T04:07:56Z",
+      "run_started_at": "2026-05-27T04:07:25Z",
+      "repo": "pv-udpv/pplx-lab",
+      "pr_number": 998,
+      "note": "Reconstructed from PR check runs via pull_request_read:get_check_runs; actor/event inferred from PR data; workflow file mapping is approximate"
+    },
+    {
+      "id": 26490073089,
+      "name": "pplx-unified-ci",
+      "head_branch": "pplx/docs/briefing-2026-05-27",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "actor": {
+        "login": "pv-udpv"
+      },
+      "html_url": "https://github.com/pv-udpv/pplx-lab/actions/runs/26490073089",
+      "created_at": "2026-05-27T04:06:47Z",
+      "updated_at": "2026-05-27T04:42:52Z",
+      "run_started_at": "2026-05-27T04:06:47Z",
+      "repo": "pv-udpv/pplx-lab",
+      "pr_number": 998,
+      "note": "Reconstructed from PR check runs via pull_request_read:get_check_runs; actor/event inferred from PR data; workflow file mapping is approximate"
+    },
+    {
+      "id": 26490073090,
+      "name": "Test Collect",
+      "head_branch": "pplx/docs/briefing-2026-05-27",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "actor": {
+        "login": "pv-udpv"
+      },
+      "html_url": "https://github.com/pv-udpv/pplx-lab/actions/runs/26490073090",
+      "created_at": "2026-05-27T04:06:09Z",
+      "updated_at": "2026-05-27T04:06:37Z",
+      "run_started_at": "2026-05-27T04:06:09Z",
+      "repo": "pv-udpv/pplx-lab",
+      "pr_number": 998,
+      "note": "Reconstructed from PR check runs via pull_request_read:get_check_runs; actor/event inferred from PR data; workflow file mapping is approximate"
+    },
+    {
+      "id": 26490071623,
+      "name": "Test Collect",
+      "head_branch": "pplx/docs/briefing-2026-05-27",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "actor": {
+        "login": "pv-udpv"
+      },
+      "html_url": "https://github.com/pv-udpv/pplx-lab/actions/runs/26490071623",
+      "created_at": "2026-05-27T04:06:07Z",
+      "updated_at": "2026-05-27T04:06:33Z",
+      "run_started_at": "2026-05-27T04:06:07Z",
+      "repo": "pv-udpv/pplx-lab",
+      "pr_number": 998,
+      "note": "Reconstructed from PR check runs via pull_request_read:get_check_runs; actor/event inferred from PR data; workflow file mapping is approximate"
+    },
+    {
+      "id": 26490071606,
+      "name": "pplx-unified-ci",
+      "head_branch": "pplx/docs/briefing-2026-05-27",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "actor": {
+        "login": "pv-udpv"
+      },
+      "html_url": "https://github.com/pv-udpv/pplx-lab/actions/runs/26490071606",
+      "created_at": "2026-05-27T04:05:11Z",
+      "updated_at": "2026-05-27T04:07:38Z",
+      "run_started_at": "2026-05-27T04:05:11Z",
+      "repo": "pv-udpv/pplx-lab",
+      "pr_number": 998,
+      "note": "Reconstructed from PR check runs via pull_request_read:get_check_runs; actor/event inferred from PR data; workflow file mapping is approximate"
+    },
+    {
+      "id": 26431635037,
+      "name": "Test Collect",
+      "head_branch": "pplx/docs/briefing-2026-05-26",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "actor": {
+        "login": "pv-udpv"
+      },
+      "html_url": "https://github.com/pv-udpv/pplx-lab/actions/runs/26431635037",
+      "created_at": "2026-05-26T04:07:14Z",
+      "updated_at": "2026-05-26T04:07:40Z",
+      "run_started_at": "2026-05-26T04:07:14Z",
+      "repo": "pv-udpv/pplx-lab",
+      "pr_number": 997,
+      "note": "Reconstructed from PR check runs via pull_request_read:get_check_runs; actor/event inferred from PR data; workflow file mapping is approximate"
+    },
+    {
+      "id": 26431634987,
+      "name": "Gitleaks Secret Scan",
+      "head_branch": "pplx/docs/briefing-2026-05-26",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "actor": {
+        "login": "pv-udpv"
+      },
+      "html_url": "https://github.com/pv-udpv/pplx-lab/actions/runs/26431634987",
+      "created_at": "2026-05-26T04:06:35Z",
+      "updated_at": "2026-05-26T04:07:10Z",
+      "run_started_at": "2026-05-26T04:06:35Z",
+      "repo": "pv-udpv/pplx-lab",
+      "pr_number": 997,
+      "note": "Reconstructed from PR check runs via pull_request_read:get_check_runs; actor/event inferred from PR data; workflow file mapping is approximate"
+    },
+    {
+      "id": 26431635023,
+      "name": "pplx-unified-ci",
+      "head_branch": "pplx/docs/briefing-2026-05-26",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "actor": {
+        "login": "pv-udpv"
+      },
+      "html_url": "https://github.com/pv-udpv/pplx-lab/actions/runs/26431635023",
+      "created_at": "2026-05-26T04:06:32Z",
+      "updated_at": "2026-05-26T04:41:45Z",
+      "run_started_at": "2026-05-26T04:06:32Z",
+      "repo": "pv-udpv/pplx-lab",
+      "pr_number": 997,
+      "note": "Reconstructed from PR check runs via pull_request_read:get_check_runs; actor/event inferred from PR data; workflow file mapping is approximate"
+    },
+    {
+      "id": 26431626738,
+      "name": "Test Collect",
+      "head_branch": "pplx/docs/briefing-2026-05-26",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "actor": {
+        "login": "pv-udpv"
+      },
+      "html_url": "https://github.com/pv-udpv/pplx-lab/actions/runs/26431626738",
+      "created_at": "2026-05-26T04:05:42Z",
+      "updated_at": "2026-05-26T04:06:29Z",
+      "run_started_at": "2026-05-26T04:05:42Z",
+      "repo": "pv-udpv/pplx-lab",
+      "pr_number": 997,
+      "note": "Reconstructed from PR check runs via pull_request_read:get_check_runs; actor/event inferred from PR data; workflow file mapping is approximate"
+    }
+  ],
+  "branches": [
+    {
+      "name": "833-register-pplx-lab-mcp-space-as-perplexity-custom-remote-source",
+      "sha": "3ced0ecb6454116300ddae2f190daa7042bb001b",
+      "protected": false
+    },
+    {
+      "name": "agent/edge-mcp",
+      "sha": "78ef710069fd82f797b4effb0bd8f1b61b86d2b5",
+      "protected": false
+    },
+    {
+      "name": "agent/tool-bridge-poc",
+      "sha": "7a3ce9e8d9d60f7b0b21e1322607b68e7685679d",
+      "protected": false
+    },
+    {
+      "name": "chore/bump-pplx-www-sse-fix",
+      "sha": "acdf60b3d21a20921bb398b93f9c0e670b11c222",
+      "protected": false
+    },
+    {
+      "name": "ci/mac-runner-smoke-830",
+      "sha": "e6f23ddc25f81b009c1220885fc8448c363aea3b",
+      "protected": false
+    },
+    {
+      "name": "claude/add-rust-openai-responses-bridge",
+      "sha": "c96ed12971746c5258d01a2ba885f0ec0c2dbc5b",
+      "protected": false
+    },
+    {
+      "name": "claude/add-safe-json-loads-utility",
+      "sha": "e209a815fde6258811863d778ac53faf7acfa601",
+      "protected": false
+    },
+    {
+      "name": "claude/add-tailscale-sandbox-join-skill",
+      "sha": "6c650c440840d760c673a04ef3ba4f219862888b",
+      "protected": false
+    },
+    {
+      "name": "claude/add-x-comet-relay-token-auth",
+      "sha": "1e13522fb62ebff9895f074ecb18346ab4ce2122",
+      "protected": false
+    },
+    {
+      "name": "claude/adr-040-enumerate-server-values",
+      "sha": "82211ea7d89173e18a0c04f3063d78a130d76761",
+      "protected": false
+    },
+    {
+      "name": "claude/chore-remove-whitespace-readme",
+      "sha": "83f4c47e12b1347367cb1750c8f2df34ddfd9fc3",
+      "protected": false
+    },
+    {
+      "name": "claude/close-gap-issues",
+      "sha": "7f32c51f49b3cc0c24836468fa9caf771ed2cbbf",
+      "protected": false
+    },
+    {
+      "name": "claude/comet-pipeline-skill-conversion-AMH2P",
+      "sha": "74d574e2983b7b532bc1b19d4c8ed02935a77306",
+      "protected": false
+    },
+    {
+      "name": "claude/complete-windmill-pplx-lab-wiring",
+      "sha": "8be91f7edb8dc8381d469d96c336052ab348e4c0",
+      "protected": false
+    },
+    {
+      "name": "claude/feat-extract-argument-shapes",
+      "sha": "cc5352fe93587d9a362a57022f7de7877cc561eb",
+      "protected": false
+    },
+    {
+      "name": "claude/finish-infisical-pr-724",
+      "sha": "5be687c6d73ea0d3d1c7529bd037818869c58121",
+      "protected": false
+    },
+    {
+      "name": "claude/fix-ci-failure-triage",
+      "sha": "87db3425ce492f287f0e3e6adeb5821bdfe463ea",
+      "protected": false
+    },
+    {
+      "name": "claude/fix-ci-harden-post-comet-pipeline",
+      "sha": "100fbf38ae8aeabfca78c34f1d39def6e501b719",
+      "protected": false
+    },
+    {
+      "name": "claude/fix-copilot-swe-permission-denied",
+      "sha": "db1deb170053acd86985a66a459cace3993138bd",
+      "protected": false
+    },
+    {
+      "name": "claude/fix-otel-collector-connection",
+      "sha": "3504ce5ab49c77ad9df014ed75d93ab718c295a6",
+      "protected": false
+    },
+    {
+      "name": "claude/fix-wave-ba-json-thread-pollution",
+      "sha": "1148b4f73177b5c90996e644c9956f9ec40cfe08",
+      "protected": false
+    },
+    {
+      "name": "claude/fix-wave-ba-json-thread-pollution-again",
+      "sha": "bb7b3df767ba9aa80f1251f8b0c1b341afa86a62",
+      "protected": false
+    },
+    {
+      "name": "claude/new-session-59HnQ",
+      "sha": "12a48ac703b2c0352e56787d44d8fc2d8967b090",
+      "protected": false
+    },
+    {
+      "name": "claude/pplx-review-pr-554",
+      "sha": "0423612b8ebc1c0eff96e2030bc012fe6f58f712",
+      "protected": false
+    },
+    {
+      "name": "claude/pv-udpv-complete-pr-560",
+      "sha": "ff3bb612b1e318bf53c8b7221a19f3900a21d583",
+      "protected": false
+    },
+    {
+      "name": "claude/pv-udpv-review-complete-pr-559",
+      "sha": "182d2599243c3ba8e0d4d7a0f3a8834c63ed78d3",
+      "protected": false
+    },
+    {
+      "name": "claude/pv-udpv-review-pr-560",
+      "sha": "9d294c5782af4a04f49e93f27d751bb67eb275bd",
+      "protected": false
+    },
+    {
+      "name": "claude/research-repo-architecture-0Jkcc",
+      "sha": "dad6cff88a738eb58bbc00c3bc435d16880f157e",
+      "protected": false
+    },
+    {
+      "name": "claude/review-complete-pr-553",
+      "sha": "692cb36b3f6238e5cf0acba85a5e68695560ac48",
+      "protected": false
+    },
+    {
+      "name": "claude/review-complete-pr-554",
+      "sha": "f065c3c0af5b03e3324d1e4f54eea19cf0147219",
+      "protected": false
+    }
+  ]
+}

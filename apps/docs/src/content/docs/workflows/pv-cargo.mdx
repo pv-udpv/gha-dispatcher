@@ -1,0 +1,34 @@
+---
+title: pv-cargo Workflows
+description: Workflows targeting the self-hosted pv-cargo runner — deployments, MCP topology, and the experiment engine.
+---
+
+import WorkflowDetail from '../../../components/WorkflowDetail.astro';
+import workflowsCatalog from '@gha-dispatcher/shared/data/workflows.json';
+
+export const workflows = workflowsCatalog.groups['pv-cargo'];
+
+The **pv-cargo** group contains **{workflows.length} workflows** that target the physical `pv-cargo`
+self-hosted runner connected via a Tailscale overlay network. These workflows handle deployments,
+MCP topology inspection, the Experiment Engine, and runner maintenance.
+
+## Workflows
+
+{workflows.map(wf => (
+  <WorkflowDetail
+    name={wf.name}
+    path={wf.path}
+    hasDispatch={wf.has_dispatch}
+    inputs={wf.dispatch_inputs}
+    collapsible={false}
+  />
+))}
+
+## Notes
+
+- **Discover / Inspect / Probe / Runner / Tailscale / Test** workflows have no `dispatch_inputs`
+  and run with branch + environment defaults only.
+- **Experiment Engine — Self-Hosted** is the most complex workflow — its `task` choice input drives
+  which sub-command runs (smoke-test, lint, run-experiment, sync-supabase, collect-evidence).
+- All pv-cargo workflows run on the `[self-hosted, pv-cargo]` runner label; they will fail (queue indefinitely)
+  if the runner is offline.

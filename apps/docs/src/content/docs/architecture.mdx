@@ -1,0 +1,108 @@
+---
+title: Architecture
+description: How GHA Dispatcher is structured — client, server, shared package, and external services.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+## System overview
+
+GHA Dispatcher is a monorepo containing three packages:
+
+| Package | Path | Role |
+|---|---|---|
+| `@gha-dispatcher/web` | `apps/web/` | React SPA (Vite) + Express API server |
+| `@gha-dispatcher/docs` | `apps/docs/` | This Starlight site |
+| `@gha-dispatcher/shared` | `packages/shared/` | Zod schemas, TypeScript types, `workflowsCatalog` |
+
+## Request flow
+
+```
+Browser (React SPA)
+  │
+  │  1. GET /api/workflows   ← served from bundled workflowsCatalog
+  │  2. GET /api/branches?q= ← GitHub REST (proxied, PAT forwarded)
+  │  3. GET /api/runs        ← GitHub REST (proxied, PAT forwarded)
+  │  4. POST /api/dispatch   ← GitHub REST workflow_dispatch event
+  │                             + Supabase gha_dispatcher.dispatch_log INSERT
+  │
+  └─► Express server (Node.js, same origin as SPA)
+        │
+        ├─► GitHub REST API  (api.github.com)
+        │     auth: Authorization: Bearer <PAT from request header>
+        │
+        └─► Supabase (gha_dispatcher schema)
+              tables: dispatch_log
+              auth: service-role key (server-side only)
+```
+
+## Monorepo layout
+
+```
+gha-dispatcher/
+├── apps/
+│   ├── web/                         @gha-dispatcher/web
+│   │   ├── client/src/              React SPA
+│   │   │   ├── components/          DispatchForm, WorkflowTabs, RecentRuns
+│   │   │   ├── lib/api.ts           fetch wrappers
+│   │   │   └── data/workflows.json  fallback (Vite alias)
+│   │   ├── server/                  Express API
+│   │   │   └── routes.ts            API route handlers
+│   │   ├── shared/schema.ts         backwards-compat alias
+│   │   └── script/build.ts          esbuild server bundler
+│   └── docs/                        @gha-dispatcher/docs  ← you are here
+│       ├── src/
+│       │   ├── content/docs/        MDX pages
+│       │   ├── components/          Astro components
+│       │   └── styles/custom.css
+│       └── astro.config.mjs
+├── packages/
+│   └── shared/                      @gha-dispatcher/shared
+│       └── src/
+│           ├── schemas.ts           Zod schemas + TS types
+│           ├── index.ts             re-exports
+│           └── data/workflows.json  bundled workflow inventory
+├── package.json                     pnpm workspace root
+├── pnpm-workspace.yaml
+└── turbo.json                       Turborepo pipeline
+```
+
+## Client (React SPA)
+
+Built with **Vite** and served as static assets by the Express server. Key components:
+
+- **`WorkflowTabs`** — renders the pv-cargo / pv-sandbox / web tab bar, reads `workflowsCatalog` from the API.
+- **`DispatchForm`** — dynamic form generated from a workflow's `dispatch_inputs` array.
+- **`RecentRuns`** — polls `GET /api/runs`, shows status badges, links to GitHub.
+
+## Server (Express)
+
+All API routes live in `apps/web/server/routes.ts`. The server:
+
+1. Reads `Authorization: Bearer <PAT>` from the request header and forwards it to GitHub.
+2. Validates `POST /api/dispatch` body against `dispatchPayloadSchema` (Zod).
+3. Calls `POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches`.
+4. Inserts a row into `gha_dispatcher.dispatch_log` in Supabase (best-effort, non-fatal).
+
+<Aside type="note">
+The server never stores the PAT. It only uses it in-flight to forward to GitHub. The Supabase row records the workflow, ref, inputs, and resulting run ID — not the token.
+</Aside>
+
+## Shared package (`@gha-dispatcher/shared`)
+
+The shared package is the single source of truth for:
+
+- **Zod schemas** — `dispatchInputSchema`, `workflowMetaSchema`, `dispatchPayloadSchema`
+- **TypeScript types** — `WorkflowMeta`, `WorkflowInventory`, `RunSummary`, `DispatchLogRow`, etc.
+- **`workflowsCatalog`** — the bundled JSON inventory of all known workflows, grouped by `pv-cargo`, `pv-sandbox`, `web`
+
+Both `apps/web` (server + client) and `apps/docs` import from `@gha-dispatcher/shared`. This ensures the docs always reflect the actual type contracts the app enforces.
+
+## Deployment
+
+| Component | Host |
+|---|---|
+| Web app (SPA + API) | Deployed via the parent agent's `deploy_website` |
+| Docs site | Static export from `apps/docs/dist/`, deployed separately |
+| Supabase | Managed Postgres + PostgREST, `gha_dispatcher` schema |
+| pv-cargo (self-hosted runner) | Physical node, accessed via Tailscale overlay network |
