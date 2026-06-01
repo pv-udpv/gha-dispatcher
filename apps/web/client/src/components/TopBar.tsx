@@ -25,6 +25,14 @@ export function TopBar() {
           >
             pv-udpv/pplx-lab
           </span>
+          <a
+            href="https://gha-dispatcher-docs-435f43a9.vercel.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-muted-foreground hidden sm:inline hover:text-foreground transition-colors"
+          >
+            Docs
+          </a>
         </div>
       </div>
 
