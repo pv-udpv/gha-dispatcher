@@ -26,7 +26,7 @@ export function TopBar() {
             pv-udpv/pplx-lab
           </span>
           <a
-            href="https://gha-dispatcher-docs-435f43a9.vercel.app"
+            href="https://www.perplexity.ai/computer/a/gha-dispatcher-docs-435f43a9-5yXNITXlRyWtqTCemIQ6nA"
             target="_blank"
             rel="noopener noreferrer"
             className="text-xs text-muted-foreground hidden sm:inline hover:text-foreground transition-colors"
