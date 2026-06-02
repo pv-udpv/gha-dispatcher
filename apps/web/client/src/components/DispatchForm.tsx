@@ -3,6 +3,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { Check, ChevronsUpDown, Send, GitBranch, Loader2 } from "lucide-react";
 import type { WorkflowMeta, DispatchInput } from "@gha-dispatcher/shared";
 import { useGithub } from "@/lib/github-context";
+import { useRepo } from "@/lib/repoContext";
 import { fetchBranches, dispatchWorkflow, type DispatchResult } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -59,6 +60,7 @@ interface Props {
 
 export function DispatchForm({ workflow, group, defaultBranch, onDispatched }: Props) {
   const { connected, authHeader } = useGithub();
+  const { currentRepoFull } = useRepo();
   const inputs = workflow.dispatch_inputs || [];
 
   const [ref, setRef] = useState(defaultBranch);
@@ -72,8 +74,8 @@ export function DispatchForm({ workflow, group, defaultBranch, onDispatched }: P
 
   // Branch autocomplete — only fetch once the PAT exists.
   const branchesQ = useQuery({
-    queryKey: ["/api/branches", branchQuery],
-    queryFn: () => fetchBranches(branchQuery, authHeader()),
+    queryKey: ["/api/branches", branchQuery, currentRepoFull],
+    queryFn: () => fetchBranches(branchQuery, authHeader(), currentRepoFull),
     enabled: connected && branchOpen,
     staleTime: 30_000,
   });
@@ -100,6 +102,7 @@ export function DispatchForm({ workflow, group, defaultBranch, onDispatched }: P
           ref: ref.trim() || defaultBranch,
           environment: environment.trim(),
           inputs: values,
+          repo_full: currentRepoFull,
         },
         authHeader(),
       ),

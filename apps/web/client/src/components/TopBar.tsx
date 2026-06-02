@@ -3,6 +3,7 @@ import { Logo } from "./Logo";
 import { useGithub } from "@/lib/github-context";
 import { useTheme } from "@/lib/theme-context";
 import { Button } from "@/components/ui/button";
+import { RepoSwitcher } from "./RepoSwitcher";
 
 export function TopBar() {
   const { connected, setPat } = useGithub();
@@ -37,6 +38,9 @@ export function TopBar() {
       </div>
 
       <div className="flex items-center gap-2">
+        {/* v4: Repo switcher — only when PAT is connected */}
+        {connected && <RepoSwitcher />}
+
         <div
           className="flex items-center gap-1.5 rounded-full border border-border bg-background px-2.5 py-1"
           data-testid="chip-pat-status"

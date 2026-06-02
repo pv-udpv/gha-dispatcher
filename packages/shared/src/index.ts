@@ -13,6 +13,15 @@ export type {
   RerunRequest,
   CancelRequest,
   RunActionResponse,
+  // v4 Multi-repo
+  RepoFull,
+  GroupRule,
+  CreateGroupRule,
+  PatchGroupRule,
+  GroupedWorkflows,
+  WorkflowInventoryV2,
+  RepoSummary,
+  PreviewRulesPayload,
 } from "./schemas.js";
 
 export {
@@ -22,6 +31,13 @@ export {
   rerunRequestSchema,
   cancelRequestSchema,
   runActionResponseSchema,
+  // v4 Multi-repo
+  repoFullSchema,
+  groupRuleSchema,
+  createGroupRuleSchema,
+  patchGroupRuleSchema,
+  workflowInventoryV2Schema,
+  previewRulesSchema,
 } from "./schemas.js";
 
 export { default as workflowsCatalog } from "./data/workflows.json";

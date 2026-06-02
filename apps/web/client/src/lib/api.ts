@@ -14,10 +14,13 @@ export async function fetchWorkflows(): Promise<WorkflowInventory> {
 export async function fetchBranches(
   q: string,
   authHeader: Record<string, string>,
+  repoFull?: string,
 ): Promise<BranchSummary[]> {
+  const params = new URLSearchParams({ q });
+  if (repoFull) params.set("repo_full", repoFull);
   const res = await apiRequest(
     "GET",
-    `/api/branches?q=${encodeURIComponent(q)}`,
+    `/api/branches?${params.toString()}`,
     undefined,
     authHeader,
   );
@@ -27,8 +30,10 @@ export async function fetchBranches(
 
 export async function fetchRuns(
   authHeader: Record<string, string>,
+  repoFull?: string,
 ): Promise<RunSummary[]> {
-  const res = await apiRequest("GET", "/api/runs", undefined, authHeader);
+  const params = repoFull ? `?repo_full=${encodeURIComponent(repoFull)}` : "";
+  const res = await apiRequest("GET", `/api/runs${params}`, undefined, authHeader);
   const data = await res.json();
   return data.runs as RunSummary[];
 }
