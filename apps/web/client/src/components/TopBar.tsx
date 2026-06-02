@@ -1,4 +1,5 @@
 import { Moon, Sun, LogOut } from "lucide-react";
+import { Link } from "wouter";
 import { Logo } from "./Logo";
 import { useGithub } from "@/lib/github-context";
 import { useTheme } from "@/lib/theme-context";
@@ -34,6 +35,12 @@ export function TopBar() {
           >
             Docs
           </a>
+          <Link
+            href="/playbooks"
+            className="text-xs text-muted-foreground hidden sm:inline hover:text-foreground transition-colors"
+          >
+            Playbooks
+          </Link>
         </div>
       </div>
 

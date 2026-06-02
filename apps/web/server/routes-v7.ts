@@ -1,0 +1,189 @@
+/**
+ * routes-v7.ts — v7 Playbooks API routes.
+ *
+ * Mount via: import v7Router from './routes-v7.js'; app.use(v7Router);
+ */
+import { Router, type Request, type Response, type NextFunction } from 'express';
+import {
+  createPlaybookSchema,
+  dagSchema,
+} from '@gha-dispatcher/shared';
+import {
+  listPlaybooks,
+  getPlaybook,
+  upsertPlaybook,
+  deletePlaybook,
+  getRun,
+} from './playbooksStore.js';
+import { toGithubYaml, playbookFilePath, slug } from './playbookExport.js';
+import { playbookRunner } from './playbookRunner.js';
+import { openPlaybookPr } from './prFlowV7.js';
+
+function getPatHeader(req: Request): string | null {
+  const h = req.header('x-github-pat') || req.header('X-GitHub-PAT');
+  if (h) return h.trim();
+  const auth = req.header('authorization') || req.header('Authorization');
+  if (!auth) return null;
+  const m = auth.match(/^Bearer\s+(.+)$/i);
+  return m ? m[1].trim() : null;
+}
+
+function requirePat(req: Request, res: Response): string | null {
+  const pat = getPatHeader(req);
+  if (!pat) {
+    res.status(401).json({ message: 'Missing GitHub PAT (x-github-pat or Authorization: Bearer <pat>)' });
+    return null;
+  }
+  return pat;
+}
+
+const v7Router = Router();
+
+// Initialize orphan recovery at module load
+playbookRunner.init().catch((e) =>
+  console.error('[v7] playbookRunner.init error:', e?.message),
+);
+
+// GET /api/playbooks?repo_full=
+v7Router.get('/api/playbooks', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const repoFull = req.query.repo_full as string | undefined;
+    const playbooks = await listPlaybooks(repoFull);
+    res.json({ playbooks });
+  } catch (e) { next(e); }
+});
+
+// GET /api/playbooks/:id
+v7Router.get('/api/playbooks/:id', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const playbook = await getPlaybook(req.params.id);
+    if (!playbook) return res.status(404).json({ message: 'Playbook not found' });
+    res.json({ playbook });
+  } catch (e) { next(e); }
+});
+
+// POST /api/playbooks
+v7Router.post('/api/playbooks', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const parsed = createPlaybookSchema.safeParse(req.body);
+    if (!parsed.success) {
+      return res.status(400).json({ message: 'Invalid playbook', errors: parsed.error.flatten() });
+    }
+    const playbook = await upsertPlaybook(parsed.data);
+    res.status(201).json({ playbook });
+  } catch (e) { next(e); }
+});
+
+// PUT /api/playbooks/:id
+v7Router.put('/api/playbooks/:id', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const existing = await getPlaybook(req.params.id);
+    if (!existing) return res.status(404).json({ message: 'Playbook not found' });
+
+    const dagParsed = dagSchema.safeParse(req.body.dag);
+    if (!dagParsed.success) {
+      return res.status(400).json({ message: 'Invalid dag', errors: dagParsed.error.flatten() });
+    }
+
+    const updated = await upsertPlaybook({
+      id: req.params.id,
+      repo_full: req.body.repo_full ?? existing.repo_full,
+      name: req.body.name ?? existing.name,
+      description: req.body.description ?? existing.description,
+      dag: dagParsed.data,
+      version: (existing.version ?? 1) + 1,
+    });
+    res.json({ playbook: updated });
+  } catch (e) { next(e); }
+});
+
+// DELETE /api/playbooks/:id
+v7Router.delete('/api/playbooks/:id', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await deletePlaybook(req.params.id);
+    res.json({ ok: true });
+  } catch (e) { next(e); }
+});
+
+// POST /api/playbooks/:id/run
+v7Router.post('/api/playbooks/:id/run', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const pat = requirePat(req, res);
+    if (!pat) return;
+
+    const playbook = await getPlaybook(req.params.id);
+    if (!playbook) return res.status(404).json({ message: 'Playbook not found' });
+
+    const triggeredBy: string | undefined = req.body?.triggered_by;
+    const runId = await playbookRunner.start(req.params.id, pat, triggeredBy);
+    res.json({ run_id: runId });
+  } catch (e) { next(e); }
+});
+
+// POST /api/playbooks/:id/export-pr
+v7Router.post('/api/playbooks/:id/export-pr', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const pat = requirePat(req, res);
+    if (!pat) return;
+
+    const playbook = await getPlaybook(req.params.id);
+    if (!playbook) return res.status(404).json({ message: 'Playbook not found' });
+
+    const yamlContent = toGithubYaml(playbook);
+    const filePath = playbookFilePath(playbook.name);
+    const branchSuffix = slug(playbook.name);
+    const prTitle = `chore: add playbook "${playbook.name}" via gha-dispatcher`;
+    const prBody = [
+      `This PR adds the playbook **${playbook.name}** exported from gha-dispatcher.`,
+      '',
+      `Repo: \`${playbook.repo_full}\``,
+      `Version: ${playbook.version}`,
+      '',
+      '_Generated by gha-dispatcher v7._',
+    ].join('\n');
+
+    const { pr_url, pr_number } = await openPlaybookPr(
+      pat,
+      playbook.repo_full,
+      filePath,
+      yamlContent,
+      branchSuffix,
+      prTitle,
+      prBody,
+    );
+
+    res.json({ pr_url, pr_number });
+  } catch (e) { next(e); }
+});
+
+// GET /api/playbook-runs/:id
+v7Router.get('/api/playbook-runs/:id', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const run = await getRun(req.params.id);
+    if (!run) return res.status(404).json({ message: 'Run not found' });
+    res.json({ run });
+  } catch (e) { next(e); }
+});
+
+// POST /api/playbook-runs/:id/cancel
+v7Router.post('/api/playbook-runs/:id/cancel', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await playbookRunner.cancel(req.params.id);
+    res.json({ ok: true });
+  } catch (e) { next(e); }
+});
+
+// POST /api/playbook-runs/:id/approve/:nodeId
+v7Router.post(
+  '/api/playbook-runs/:id/approve/:nodeId',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const pat = requirePat(req, res);
+      if (!pat) return;
+      await playbookRunner.approve(req.params.id, req.params.nodeId, pat);
+      res.json({ ok: true });
+    } catch (e) { next(e); }
+  },
+);
+
+export default v7Router;
