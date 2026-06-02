@@ -1,9 +1,17 @@
 import { useState } from "react";
-import { KeyRound, ShieldCheck } from "lucide-react";
+import { KeyRound, ShieldCheck, ExternalLink, Terminal, Check, Copy } from "lucide-react";
 import { useGithub } from "@/lib/github-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Logo } from "./Logo";
+
+// GitHub fine-grained PAT creation page (pre-scoped to the target org/user where possible)
+const GH_PAT_NEW_URL =
+  "https://github.com/settings/personal-access-tokens/new?target_name=pv-udpv&description=gha-dispatcher";
+
+// CLI alternative: refresh the active `gh` token with the scopes this app needs.
+// Note: `gh` only issues classic OAuth tokens — for true fine-grained tokens, use the URL above.
+const GH_CLI_CMD = "gh auth refresh -s repo,workflow -h github.com && gh auth token";
 
 async function checkPatScopes(
   pat: string,
@@ -33,6 +41,17 @@ export function PatPanel() {
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  const copyCli = async () => {
+    try {
+      await navigator.clipboard.writeText(GH_CLI_CMD);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1500);
+    } catch {
+      // clipboard unavailable — user can select manually
+    }
+  };
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,7 +84,7 @@ export function PatPanel() {
           <h1 className="text-base font-semibold">Connect GitHub</h1>
         </div>
 
-        <p className="mb-4 text-sm text-muted-foreground">
+        <p className="mb-3 text-sm text-muted-foreground">
           Paste a{" "}
           <span className="font-medium text-foreground">fine-grained PAT</span>{" "}
           with{" "}
@@ -75,6 +94,66 @@ export function PatPanel() {
           scopes to dispatch workflows on{" "}
           <span className="font-mono text-xs">pv-udpv/pplx-lab</span>.
         </p>
+
+        {/* ── Don't have one? Create via web or CLI ─────────────────────────────── */}
+        <div className="mb-4 rounded-lg border border-border bg-background/60 p-3">
+          <p className="mb-2 text-xs font-medium text-foreground">Don't have one yet?</p>
+
+          <a
+            href={GH_PAT_NEW_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-xs text-primary underline-offset-2 hover:underline"
+            data-testid="link-create-pat"
+          >
+            <ExternalLink className="h-3.5 w-3.5" />
+            Create a fine-grained PAT on GitHub
+          </a>
+
+          <p className="mt-2.5 mb-1.5 text-xs text-muted-foreground">
+            Or via{" "}
+            <a
+              href="https://cli.github.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-2 hover:text-foreground"
+            >
+              gh CLI
+            </a>
+            :
+          </p>
+          <div className="group relative overflow-hidden rounded-md border border-border bg-muted/40">
+            <div className="flex items-center justify-between gap-2 border-b border-border px-2.5 py-1">
+              <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-muted-foreground">
+                <Terminal className="h-3 w-3" />
+                shell
+              </div>
+              <button
+                type="button"
+                onClick={copyCli}
+                className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[11px] text-muted-foreground hover:bg-muted hover:text-foreground"
+                aria-label="Copy command"
+                data-testid="button-copy-gh-cmd"
+              >
+                {copied ? (
+                  <>
+                    <Check className="h-3 w-3" /> copied
+                  </>
+                ) : (
+                  <>
+                    <Copy className="h-3 w-3" /> copy
+                  </>
+                )}
+              </button>
+            </div>
+            <pre className="overflow-x-auto px-2.5 py-2 font-mono text-[11px] leading-relaxed text-foreground">
+              <code>{GH_CLI_CMD}</code>
+            </pre>
+          </div>
+          <p className="mt-1.5 text-[10.5px] leading-snug text-muted-foreground">
+            <code className="font-mono">gh</code> issues classic tokens. For true fine-grained, use the link above.
+          </p>
+        </div>
 
         <form onSubmit={submit} className="space-y-3">
           <div className="relative">
