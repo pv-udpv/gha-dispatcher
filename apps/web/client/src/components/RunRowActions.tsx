@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   MoreVertical,
   ExternalLink,
@@ -6,6 +7,7 @@ import {
   XCircle,
   Copy,
   Hash,
+  ScrollText,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -26,9 +28,13 @@ const CANCEL_STATUSES = new Set(["queued", "in_progress", "waiting", "pending"])
 
 interface RunRowActionsProps {
   run: RunSummary;
+  /** Called when the user requests to open the log stream panel. */
+  onViewLogs?: (run: RunSummary) => void;
+  /** True when this row is currently hovered (for keyboard shortcut activation). */
+  isHovered?: boolean;
 }
 
-export function RunRowActions({ run }: RunRowActionsProps) {
+export function RunRowActions({ run, onViewLogs, isHovered }: RunRowActionsProps) {
   const { toast } = useToast();
   const { rerun, rerunFailed, cancel, isPending } = useRunActions();
 
@@ -63,6 +69,27 @@ export function RunRowActions({ run }: RunRowActionsProps) {
     });
   }
 
+  function handleViewLogs() {
+    onViewLogs?.(run);
+  }
+
+  // Keyboard shortcut — "L" when this row is hovered
+  useEffect(() => {
+    if (!isHovered) return;
+    function onKeyDown(e: KeyboardEvent) {
+      // Ignore when focus is inside an input/textarea/button
+      const tag = (e.target as HTMLElement)?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+      if (e.key === "l" || e.key === "L") {
+        e.preventDefault();
+        handleViewLogs();
+      }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isHovered, run.id]);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -77,12 +104,19 @@ export function RunRowActions({ run }: RunRowActionsProps) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-52">
-        {/* View logs */}
+        {/* View logs (live stream panel) */}
+        <DropdownMenuItem onClick={handleViewLogs}>
+          <ScrollText className="h-4 w-4" />
+          View logs
+          <DropdownMenuShortcut>L</DropdownMenuShortcut>
+        </DropdownMenuItem>
+
+        {/* Open on GitHub */}
         <DropdownMenuItem
           onClick={() => window.open(run.html_url, "_blank", "noopener")}
         >
           <ExternalLink className="h-4 w-4" />
-          View logs
+          Open on GitHub
           <DropdownMenuShortcut>O</DropdownMenuShortcut>
         </DropdownMenuItem>
 

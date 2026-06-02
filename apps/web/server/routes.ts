@@ -1,5 +1,7 @@
 import type { Express, Request, Response } from "express";
 import type { Server } from "node:http";
+import { streamRouter } from "./routes-v5";
+import { registerV4Routes } from "./routes-v4.js";
 import crypto from "node:crypto";
 import {
   dispatchPayloadSchema,
@@ -163,6 +165,12 @@ export async function registerRoutes(
   httpServer: Server,
   app: Express,
 ): Promise<Server> {
+  // -- v5 SSE log stream ---------------------------------------------------
+  app.use(streamRouter);
+
+  // -- v4 Multi-repo routes (repos, rules, cached inventories) -----------
+  registerV4Routes(app);
+
   // -- Health --------------------------------------------------------------
   app.get("/api/health", (_req, res) => {
     res.json({ ok: true, repo: REPO });
@@ -183,10 +191,12 @@ export async function registerRoutes(
     const token = requireToken(req, res);
     if (!token) return;
     const q = String(req.query.q || "").toLowerCase();
+    // v4: optional repo_full override
+    const branchRepo = String(req.query.repo_full || REPO);
     try {
       const { data } = await github(
         token,
-        `/repos/${REPO}/branches?per_page=100`,
+        `/repos/${branchRepo}/branches?per_page=100`,
       );
       const names: string[] = (Array.isArray(data) ? data : []).map(
         (b: any) => b.name,
@@ -204,10 +214,12 @@ export async function registerRoutes(
   app.get("/api/runs", async (req, res, next) => {
     const token = requireToken(req, res);
     if (!token) return;
+    // v4: optional repo_full override
+    const runsRepo = String(req.query.repo_full || REPO);
     try {
       const { data } = await github(
         token,
-        `/repos/${REPO}/actions/runs?per_page=20`,
+        `/repos/${runsRepo}/actions/runs?per_page=20`,
       );
       const runs = (data?.workflow_runs || []).map(slimRun);
       res.json({ runs });
@@ -227,8 +239,11 @@ export async function registerRoutes(
         .status(400)
         .json({ message: "Invalid dispatch payload", errors: parsed.error.flatten() });
     }
-    const { workflow_file, workflow_name, group, ref, environment, inputs } =
+    const { workflow_file, workflow_name, group, ref, environment, inputs, repo_full: bodyRepo } =
       parsed.data;
+
+    // v4: use repo from body if provided, fall back to env REPO.
+    const targetRepo = bodyRepo || REPO;
 
     // GitHub workflow_dispatch only accepts string inputs declared in the
     // workflow; merge environment in only if the caller passed it.
@@ -241,7 +256,7 @@ export async function registerRoutes(
       // Fire the dispatch. 204 = accepted.
       await github(
         token,
-        `/repos/${REPO}/actions/workflows/${encodeURIComponent(workflow_file)}/dispatches`,
+        `/repos/${targetRepo}/actions/workflows/${encodeURIComponent(workflow_file)}/dispatches`,
         {
           method: "POST",
           body: JSON.stringify({ ref, inputs: ghInputs }),
@@ -265,7 +280,7 @@ export async function registerRoutes(
           .insert({
             user_login: login,
             repo_slug: group || null,
-            repo_full: REPO,
+            repo_full: targetRepo,
             workflow_id: workflow_file,
             workflow_name: workflow_name || null,
             ref,
@@ -294,7 +309,7 @@ export async function registerRoutes(
               const actorQ = login ? `&actor=${encodeURIComponent(login)}` : "";
               const { data } = await github(
                 token,
-                `/repos/${REPO}/actions/runs?event=workflow_dispatch&per_page=10${actorQ}`,
+                `/repos/${targetRepo}/actions/runs?event=workflow_dispatch&per_page=10${actorQ}`,
               );
               const runs: any[] = data?.workflow_runs || [];
               const match = runs.find(
