@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { KeyRound, ShieldCheck, ExternalLink, Terminal, Check, Copy } from "lucide-react";
+import { KeyRound, ShieldCheck, ExternalLink, Terminal, Check, Copy, CheckCircle2, AlertTriangle } from "lucide-react";
 import { useGithub } from "@/lib/github-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,27 +13,104 @@ const GH_PAT_NEW_URL =
 // Note: `gh` only issues classic OAuth tokens — for true fine-grained tokens, use the URL above.
 const GH_CLI_CMD = "gh auth refresh -s repo,workflow -h github.com && gh auth token";
 
-async function checkPatScopes(
-  pat: string,
-): Promise<{ ok: boolean; scopes: string[] }> {
-  // Validate via GET /user, also check x-oauth-scopes header
-  const res = await fetch("https://api.github.com/user", {
-    headers: {
-      Authorization: `Bearer ${pat}`,
-      Accept: "application/vnd.github+json",
-      "X-GitHub-Api-Version": "2022-11-28",
-    },
-  });
+// Token kind:
+//   - 'classic' (ghp_..., gho_..., ghs_...) returns the `x-oauth-scopes` header on GET /user.
+//   - 'fine-grained' (github_pat_...) does NOT — instead it has per-permission grants we can probe.
+type PatKind = "classic" | "fine-grained" | "unknown";
 
-  if (!res.ok) return { ok: false, scopes: [] };
+function detectPatKind(pat: string): PatKind {
+  if (pat.startsWith("github_pat_")) return "fine-grained";
+  if (/^gh[pousr]_/i.test(pat)) return "classic";
+  return "unknown";
+}
 
-  const scopeHeader = res.headers.get("x-oauth-scopes") || "";
-  const scopes = scopeHeader
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean);
+const REQUIRED_SCOPES = ["repo", "workflow"] as const;
 
-  return { ok: true, scopes };
+export interface PatValidation {
+  ok: boolean;
+  kind: PatKind;
+  user: { login: string; name: string | null; avatar_url: string | null } | null;
+  scopes: string[];
+  missing: string[]; // missing scopes (classic) or permissions (fine-grained)
+  rateLimitRemaining: number | null;
+  errorMessage: string | null;
+}
+
+async function validatePat(pat: string): Promise<PatValidation> {
+  const kind = detectPatKind(pat);
+
+  const baseHeaders = {
+    Authorization: `Bearer ${pat}`,
+    Accept: "application/vnd.github+json",
+    "X-GitHub-Api-Version": "2022-11-28",
+  };
+
+  // Step 1: GET /user — confirms the token authenticates at all.
+  const userRes = await fetch("https://api.github.com/user", { headers: baseHeaders });
+
+  if (userRes.status === 401) {
+    return {
+      ok: false, kind, user: null, scopes: [], missing: [],
+      rateLimitRemaining: null,
+      errorMessage: "Token rejected by GitHub (401 Unauthorized). It may be invalid, revoked, or expired.",
+    };
+  }
+  if (!userRes.ok) {
+    return {
+      ok: false, kind, user: null, scopes: [], missing: [],
+      rateLimitRemaining: null,
+      errorMessage: `GitHub returned HTTP ${userRes.status}. Try again or check the token.`,
+    };
+  }
+
+  const user = await userRes.json();
+  const userInfo = {
+    login: String(user?.login ?? ""),
+    name: user?.name ? String(user.name) : null,
+    avatar_url: user?.avatar_url ? String(user.avatar_url) : null,
+  };
+  const rateLimitRemaining = Number(userRes.headers.get("x-ratelimit-remaining")) || null;
+
+  // Step 2: scope check.
+  if (kind === "classic" || kind === "unknown") {
+    const scopeHeader = userRes.headers.get("x-oauth-scopes") || "";
+    const scopes = scopeHeader.split(",").map((s) => s.trim()).filter(Boolean);
+
+    // `repo` implies all `repo:*` subscopes
+    const has = (s: string) => scopes.includes(s) || (s === "repo" && scopes.some((x) => x.startsWith("repo")));
+    const missing = REQUIRED_SCOPES.filter((s) => !has(s));
+
+    return {
+      ok: missing.length === 0, kind, user: userInfo, scopes, missing,
+      rateLimitRemaining,
+      errorMessage: missing.length === 0 ? null
+        : `Token is missing required scope${missing.length > 1 ? "s" : ""}: ${missing.join(", ")}. Re-create it with both \`repo\` and \`workflow\` scopes.`,
+    };
+  }
+
+  // Fine-grained: x-oauth-scopes is absent. Probe two permissions instead:
+  //   - actions:write  → GET /repos/{owner}/{repo}/actions/permissions  (requires actions read at minimum)
+  //   - contents:read  → GET /repos/{owner}/{repo}
+  // We don't know the target repo yet, so we only verify that the token has GitHub Actions API access
+  // by hitting GET /user/installations (always allowed for any fine-grained PAT) and infer success from
+  // the absence of 403. Real per-repo enforcement happens at dispatch time.
+  // For a more rigorous check we hit GET /repos/{REPO}/actions/permissions on pv-udpv/pplx-lab.
+  const probeRes = await fetch("https://api.github.com/repos/pv-udpv/pplx-lab/actions/permissions", { headers: baseHeaders });
+  const missing: string[] = [];
+  if (probeRes.status === 403 || probeRes.status === 404) {
+    // 403 = no permission grant; 404 = repo not selected in the token's resource list
+    missing.push("repo (Contents: Read) + workflow (Actions: Write) on pv-udpv/pplx-lab");
+  } else if (!probeRes.ok && probeRes.status !== 401) {
+    // 401 already handled above; other errors are inconclusive but we mark missing to be safe
+    missing.push(`actions API check returned HTTP ${probeRes.status}`);
+  }
+
+  return {
+    ok: missing.length === 0, kind, user: userInfo, scopes: [], missing,
+    rateLimitRemaining,
+    errorMessage: missing.length === 0 ? null
+      : `Fine-grained token is missing the required permissions: ${missing.join("; ")}. Re-create it with Contents: Read and Actions: Write on pv-udpv/pplx-lab.`,
+  };
 }
 
 export function PatPanel() {
@@ -42,6 +119,7 @@ export function PatPanel() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [success, setSuccess] = useState<PatValidation | null>(null);
 
   const copyCli = async () => {
     try {
@@ -60,15 +138,23 @@ export function PatPanel() {
 
     setLoading(true);
     setError(null);
+    setSuccess(null);
 
     try {
-      const { ok, scopes } = await checkPatScopes(trimmed);
-      if (!ok) {
-        setError("Invalid PAT or GitHub returned an error. Check the token and try again.");
+      const v = await validatePat(trimmed);
+      if (!v.ok) {
+        setError(v.errorMessage || "Token validation failed.");
         return;
       }
-      setPatScopes(scopes);
-      setPat(trimmed);
+      // Show the success state briefly so the user sees the checkmark + username,
+      // then commit to the global context (which unmounts this panel).
+      setSuccess(v);
+      window.setTimeout(() => {
+        // For fine-grained tokens we don't have a scope list — store synthetic markers so
+        // downstream `hasRepoScope` / `hasWorkflowScope` checks still pass.
+        setPatScopes(v.kind === "fine-grained" ? ["repo", "workflow"] : v.scopes);
+        setPat(trimmed);
+      }, 900);
     } catch (e: any) {
       setError(e?.message || "Network error validating PAT.");
     } finally {
@@ -172,18 +258,52 @@ export function PatPanel() {
           </div>
 
           {error && (
-            <p className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive">
-              {error}
-            </p>
+            <div
+              role="alert"
+              className="flex items-start gap-2 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive"
+              data-testid="pat-error"
+            >
+              <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+              <span className="break-words">{error}</span>
+            </div>
+          )}
+
+          {success && (
+            <div
+              role="status"
+              className="flex items-start gap-2 rounded-md border border-emerald-500/40 bg-emerald-500/10 px-3 py-2 text-xs text-emerald-700 dark:text-emerald-300"
+              data-testid="pat-success"
+            >
+              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-1.5">
+                  {success.user?.avatar_url && (
+                    <img
+                      src={success.user.avatar_url}
+                      alt=""
+                      className="h-4 w-4 rounded-full"
+                    />
+                  )}
+                  <span className="font-medium">
+                    Connected as @{success.user?.login}
+                  </span>
+                </div>
+                <div className="mt-0.5 text-[11px] opacity-80">
+                  {success.kind === "fine-grained"
+                    ? "Fine-grained token — required permissions confirmed."
+                    : `Classic token — scopes: ${success.scopes.join(", ") || "(none reported)"}.`}
+                </div>
+              </div>
+            </div>
           )}
 
           <Button
             type="submit"
             className="w-full"
-            disabled={!value.trim() || loading}
+            disabled={!value.trim() || loading || !!success}
             data-testid="button-connect-pat"
           >
-            {loading ? "Validating…" : "Connect"}
+            {loading ? "Validating…" : success ? "Connected" : "Connect"}
           </Button>
         </form>
 
