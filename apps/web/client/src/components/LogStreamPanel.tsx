@@ -34,6 +34,7 @@ import {
 import { StatusIcon, resolveRunState } from "./StatusDot";
 import { useLogStream } from "@/hooks/useLogStream";
 import type { JobInfo } from "@/hooks/useLogStream";
+import { FailureInsightCard } from "./FailureInsightCard";
 
 // ---------------------------------------------------------------------------
 // ANSI converter (singleton)
@@ -459,6 +460,22 @@ export function LogStreamPanel({
             <div className="flex flex-col items-center gap-2 p-10 text-center text-sm text-muted-foreground">
               <span className="h-2 w-2 rounded-full bg-muted-foreground animate-pulse" />
               Connecting to log stream…
+            </div>
+          )}
+
+          {/* v6: Failure insight card — pinned above job sections */}
+          {stream.isEnded && stream.conclusion === "failure" && repoFull && runId && (
+            <div className="px-3 pt-3">
+              <FailureInsightCard
+                runId={runId}
+                repoFull={repoFull}
+                status={stream.status}
+                conclusion={stream.conclusion}
+                onClose={() => {
+                  stream.close();
+                  onClose();
+                }}
+              />
             </div>
           )}
 

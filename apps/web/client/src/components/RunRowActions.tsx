@@ -8,6 +8,7 @@ import {
   Copy,
   Hash,
   ScrollText,
+  Lightbulb,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -73,7 +74,7 @@ export function RunRowActions({ run, onViewLogs, isHovered }: RunRowActionsProps
     onViewLogs?.(run);
   }
 
-  // Keyboard shortcut — "L" when this row is hovered
+  // Keyboard shortcuts — "L" (view logs) and "I" (why did this fail?) when hovered
   useEffect(() => {
     if (!isHovered) return;
     function onKeyDown(e: KeyboardEvent) {
@@ -84,11 +85,16 @@ export function RunRowActions({ run, onViewLogs, isHovered }: RunRowActionsProps
         e.preventDefault();
         handleViewLogs();
       }
+      if ((e.key === "i" || e.key === "I") && run.conclusion === "failure") {
+        e.preventDefault();
+        // Open the log stream panel — the insight card will appear automatically
+        handleViewLogs();
+      }
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isHovered, run.id]);
+  }, [isHovered, run.id, run.conclusion]);
 
   return (
     <DropdownMenu>
@@ -110,6 +116,15 @@ export function RunRowActions({ run, onViewLogs, isHovered }: RunRowActionsProps
           View logs
           <DropdownMenuShortcut>L</DropdownMenuShortcut>
         </DropdownMenuItem>
+
+        {/* v6: Why did this fail? — only for failed runs */}
+        {run.conclusion === "failure" && (
+          <DropdownMenuItem onClick={handleViewLogs}>
+            <Lightbulb className="h-4 w-4" />
+            Why did this fail?
+            <DropdownMenuShortcut>I</DropdownMenuShortcut>
+          </DropdownMenuItem>
+        )}
 
         {/* Open on GitHub */}
         <DropdownMenuItem
