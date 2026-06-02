@@ -2,6 +2,8 @@ import type { Express, Request, Response } from "express";
 import type { Server } from "node:http";
 import { streamRouter } from "./routes-v5";
 import { registerV4Routes } from "./routes-v4.js";
+import v7Router from "./routes-v7.js";
+import { v6Router } from "./routes-v6.js";
 import crypto from "node:crypto";
 import {
   dispatchPayloadSchema,
@@ -170,6 +172,12 @@ export async function registerRoutes(
 
   // -- v4 Multi-repo routes (repos, rules, cached inventories) -----------
   registerV4Routes(app);
+
+  // -- v7 Playbooks routes -------------------------------------------------
+  app.use(v7Router);
+
+  // -- v6 Run Intelligence (insight, rerun-debug, open-fix-pr) -----------
+  app.use(v6Router);
 
   // -- Health --------------------------------------------------------------
   app.get("/api/health", (_req, res) => {
