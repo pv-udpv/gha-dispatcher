@@ -8,12 +8,14 @@ import { ThemeProvider } from "@/lib/theme-context";
 import { GithubProvider } from "@/lib/github-context";
 import { RepoProvider } from "@/lib/repoContext";
 import Home from "@/pages/home";
+import PlaybooksPage from "@/pages/playbooks";
 import NotFound from "@/pages/not-found";
 
 function AppRouter() {
   return (
     <Switch>
       <Route path="/" component={Home} />
+      <Route path="/playbooks" component={PlaybooksPage} />
       <Route component={NotFound} />
     </Switch>
   );
