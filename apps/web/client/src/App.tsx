@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/lib/theme-context";
 import { GithubProvider } from "@/lib/github-context";
+import { RepoProvider } from "@/lib/repoContext";
 import Home from "@/pages/home";
 import NotFound from "@/pages/not-found";
 
@@ -23,12 +24,14 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <GithubProvider>
+          <RepoProvider>
           <TooltipProvider>
             <Toaster />
             <Router hook={useHashLocation}>
               <AppRouter />
             </Router>
           </TooltipProvider>
+          </RepoProvider>
         </GithubProvider>
       </ThemeProvider>
     </QueryClientProvider>
