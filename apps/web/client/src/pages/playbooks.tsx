@@ -71,12 +71,16 @@ export default function PlaybooksPage() {
   const handleCreate = async () => {
     const name = newName.trim();
     if (!name) return;
+    if (!pat) {
+      toast({ title: 'PAT required', description: 'Connect your GitHub PAT first.', variant: 'destructive' });
+      return;
+    }
     try {
       const res = await apiRequest('POST', '/api/playbooks', {
         repo_full: currentRepoFull,
         name,
         dag: emptyDag(),
-      });
+      }, { 'x-github-pat': pat });
       const data = await res.json();
       const pb: Playbook = data.playbook;
       setPlaybooks((prev) => [pb, ...prev]);
@@ -91,6 +95,10 @@ export default function PlaybooksPage() {
   // ── Save DAG ───────────────────────────────────────────────────────────────
   const handleSaveDag = useCallback(async (dag: Dag) => {
     if (!selected) return;
+    if (!pat) {
+      toast({ title: 'PAT required', description: 'Connect your GitHub PAT first.', variant: 'destructive' });
+      return;
+    }
     setSaving(true);
     try {
       const res = await apiRequest('PUT', `/api/playbooks/${selected.id}`, {
@@ -98,7 +106,7 @@ export default function PlaybooksPage() {
         name: selected.name,
         description: selected.description,
         repo_full: selected.repo_full,
-      });
+      }, { 'x-github-pat': pat });
       const data = await res.json();
       const updated: Playbook = data.playbook;
       setSelected(updated);
@@ -109,10 +117,14 @@ export default function PlaybooksPage() {
     } finally {
       setSaving(false);
     }
-  }, [selected, toast]);
+  }, [selected, toast, pat]);
 
   // ── Duplicate ──────────────────────────────────────────────────────────────
   const handleDuplicate = async (pb: Playbook) => {
+    if (!pat) {
+      toast({ title: 'PAT required', description: 'Connect your GitHub PAT first.', variant: 'destructive' });
+      return;
+    }
     const newPbName = `${pb.name} (copy)`;
     try {
       const res = await apiRequest('POST', '/api/playbooks', {
@@ -120,7 +132,7 @@ export default function PlaybooksPage() {
         name: newPbName,
         description: pb.description,
         dag: pb.dag,
-      });
+      }, { 'x-github-pat': pat });
       const data = await res.json();
       const created: Playbook = data.playbook;
       setPlaybooks((prev) => [created, ...prev]);
@@ -132,8 +144,12 @@ export default function PlaybooksPage() {
 
   // ── Delete ─────────────────────────────────────────────────────────────────
   const handleDelete = async (pb: Playbook) => {
+    if (!pat) {
+      toast({ title: 'PAT required', description: 'Connect your GitHub PAT first.', variant: 'destructive' });
+      return;
+    }
     try {
-      await apiRequest('DELETE', `/api/playbooks/${pb.id}`);
+      await apiRequest('DELETE', `/api/playbooks/${pb.id}`, undefined, { 'x-github-pat': pat });
       setPlaybooks((prev) => prev.filter((p) => p.id !== pb.id));
       if (selected?.id === pb.id) setSelected(null);
       toast({ title: 'Deleted', description: `"${pb.name}" removed.` });

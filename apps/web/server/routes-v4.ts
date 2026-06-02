@@ -163,6 +163,9 @@ export function registerV4Routes(app: Express): void {
   app.post(
     "/api/repos/:owner/:repo/rules",
     async (req: Request, res: Response, next: NextFunction) => {
+      const token = requireToken(req, res);
+      if (!token) return;
+
       const { owner, repo } = req.params;
       const repoFull = `${owner}/${repo}`;
       const rfParse = repoFullSchema.safeParse(repoFull);
@@ -200,6 +203,9 @@ export function registerV4Routes(app: Express): void {
   app.patch(
     "/api/rules/:id",
     async (req: Request, res: Response, next: NextFunction) => {
+      const token = requireToken(req, res);
+      if (!token) return;
+
       const id = String(req.params.id);
       const parsed = patchGroupRuleSchema.safeParse(req.body);
       if (!parsed.success) {
@@ -231,6 +237,9 @@ export function registerV4Routes(app: Express): void {
   app.delete(
     "/api/rules/:id",
     async (req: Request, res: Response, next: NextFunction) => {
+      const token = requireToken(req, res);
+      if (!token) return;
+
       const id = String(req.params.id);
       try {
         const ok = await deleteRule(id);

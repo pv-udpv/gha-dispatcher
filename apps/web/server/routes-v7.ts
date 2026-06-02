@@ -65,6 +65,9 @@ v7Router.get('/api/playbooks/:id', async (req: Request, res: Response, next: Nex
 // POST /api/playbooks
 v7Router.post('/api/playbooks', async (req: Request, res: Response, next: NextFunction) => {
   try {
+    const pat = requirePat(req, res);
+    if (!pat) return;
+
     const parsed = createPlaybookSchema.safeParse(req.body);
     if (!parsed.success) {
       return res.status(400).json({ message: 'Invalid playbook', errors: parsed.error.flatten() });
@@ -77,6 +80,9 @@ v7Router.post('/api/playbooks', async (req: Request, res: Response, next: NextFu
 // PUT /api/playbooks/:id
 v7Router.put('/api/playbooks/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
+    const pat = requirePat(req, res);
+    if (!pat) return;
+
     const existing = await getPlaybook(req.params.id);
     if (!existing) return res.status(404).json({ message: 'Playbook not found' });
 
@@ -100,6 +106,9 @@ v7Router.put('/api/playbooks/:id', async (req: Request, res: Response, next: Nex
 // DELETE /api/playbooks/:id
 v7Router.delete('/api/playbooks/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
+    const pat = requirePat(req, res);
+    if (!pat) return;
+
     await deletePlaybook(req.params.id);
     res.json({ ok: true });
   } catch (e) { next(e); }
@@ -168,6 +177,9 @@ v7Router.get('/api/playbook-runs/:id', async (req: Request, res: Response, next:
 // POST /api/playbook-runs/:id/cancel
 v7Router.post('/api/playbook-runs/:id/cancel', async (req: Request, res: Response, next: NextFunction) => {
   try {
+    const pat = requirePat(req, res);
+    if (!pat) return;
+
     await playbookRunner.cancel(req.params.id);
     res.json({ ok: true });
   } catch (e) { next(e); }

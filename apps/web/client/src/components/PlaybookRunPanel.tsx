@@ -71,8 +71,14 @@ export function PlaybookRunPanel({ runId, dag, onClose, onRunUpdate }: PlaybookR
   }, [fetchRun, run?.status]);
 
   const handleCancel = async () => {
+    if (!pat) {
+      setError('PAT required to cancel');
+      return;
+    }
     try {
-      await apiRequest('POST', `/api/playbook-runs/${runId}/cancel`);
+      await apiRequest('POST', `/api/playbook-runs/${runId}/cancel`, undefined, {
+        'x-github-pat': pat,
+      });
       await fetchRun();
     } catch (e: any) {
       setError(e?.message ?? 'Cancel failed');

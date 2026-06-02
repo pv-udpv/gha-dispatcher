@@ -194,9 +194,37 @@ declare module 'astro:content' {
   collection: "docs";
   data: InferEntrySchema<"docs">
 } & { render(): Render[".mdx"] };
+"log-stream.mdx": {
+	id: "log-stream.mdx";
+  slug: "log-stream";
+  body: string;
+  collection: "docs";
+  data: InferEntrySchema<"docs">
+} & { render(): Render[".mdx"] };
+"multi-repo.mdx": {
+	id: "multi-repo.mdx";
+  slug: "multi-repo";
+  body: string;
+  collection: "docs";
+  data: InferEntrySchema<"docs">
+} & { render(): Render[".mdx"] };
+"playbooks.mdx": {
+	id: "playbooks.mdx";
+  slug: "playbooks";
+  body: string;
+  collection: "docs";
+  data: InferEntrySchema<"docs">
+} & { render(): Render[".mdx"] };
 "quick-start.mdx": {
 	id: "quick-start.mdx";
   slug: "quick-start";
+  body: string;
+  collection: "docs";
+  data: InferEntrySchema<"docs">
+} & { render(): Render[".mdx"] };
+"run-intelligence.mdx": {
+	id: "run-intelligence.mdx";
+  slug: "run-intelligence";
   body: string;
   collection: "docs";
   data: InferEntrySchema<"docs">
