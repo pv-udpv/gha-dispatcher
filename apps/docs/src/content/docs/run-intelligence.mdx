@@ -1,0 +1,76 @@
+---
+title: Run Intelligence
+description: Failure analysis with log parser + optional LLM, plus three one-click recovery actions.
+---
+
+import { Aside, Card, CardGrid } from '@astrojs/starlight/components';
+
+`v6` watches for failed runs and surfaces a **FailureInsight** card right inside the [log stream panel](/log-stream/). It combines deterministic log parsing with an optional LLM call, and offers three one-click recovery actions.
+
+## When the card appears
+
+The card renders inside `LogStreamPanel` when the SSE stream emits `event: end` with `conclusion === 'failure'`. You can also open it directly from the runs table:
+
+- Hover a failed run → "Why did this fail? (I)" menu item.
+- Press `I` while hovering — keyboard shortcut.
+
+## What it shows
+
+<CardGrid>
+  <Card title="Category + root cause" icon="information">
+    `config`, `dependency`, `test`, `infra`, `timeout`, `oom`, `permission`, or `unknown`.
+  </Card>
+  <Card title="Confidence pill" icon="approve-check">
+    High (≥ 0.7) · Medium (0.4–0.7) · Low (< 0.4).
+  </Card>
+  <Card title="Signal tags" icon="setting">
+    Chips for every error signature found in the logs — `python_tb`, `npm_err`, `gh_action`, `oom`, …
+  </Card>
+  <Card title="LLM badge" icon="rocket">
+    Lit when `PPLX_PROXY_URL` is configured and the LLM call succeeded.
+  </Card>
+</CardGrid>
+
+## Signal taxonomy
+
+| Kind             | Detector                                                     |
+|------------------|--------------------------------------------------------------|
+| `oom`            | `out of memory`, `JavaScript heap out of memory`, `Killed`   |
+| `timeout`        | `The action has timed out`, `timeout exceeded`               |
+| `python_tb`      | `Traceback (most recent call last):` + frame stack           |
+| `gh_action`      | `##[error]…` + `Error: …` on action steps                    |
+| `npm_err`        | Consecutive `npm ERR!` lines                                 |
+| `node_err`       | `at <fn> (<file>:<line>:<col>)` frames                       |
+| `generic_stderr` | Fallback line-level heuristic                                |
+
+Logs are clipped to the last **200 KB** before parsing (errors are almost always near the end). Signals are returned sorted by severity.
+
+## Three actions
+
+| Button                 | Endpoint                                              | What it does                                                                              |
+|------------------------|-------------------------------------------------------|-------------------------------------------------------------------------------------------|
+| Rerun with debug       | `POST /api/runs/:id/rerun-debug`                      | Reruns with `enable_debug_logging: true` → both `ACTIONS_RUNNER_DEBUG` and `ACTIONS_STEP_DEBUG` |
+| Rerun failed jobs      | `POST /api/runs/:id/rerun-failed-jobs` (v3)           | Reruns only the jobs that failed                                                          |
+| Open fix PR            | `POST /api/runs/:id/open-fix-pr`                      | Confirms patch in `AlertDialog`, forks/commits, opens PR — branch `dispatcher/fix-run-{id}` |
+
+The "Open fix PR" button is rendered only when the LLM emitted a `suggested_actions[]` entry of kind `open_fix_pr` with a concrete patch body.
+
+## LLM configuration
+
+The LLM step is **optional**. If env vars are unset, the card falls back to a heuristic insight built from the top signal — the `Open fix PR` button is hidden in that mode.
+
+| Var                  | Required | Default                       |
+|----------------------|----------|-------------------------------|
+| `PPLX_PROXY_URL`     | optional | —                             |
+| `PPLX_PROXY_KEY`     | optional | —                             |
+| `PPLX_INTEL_MODEL`   | optional | `claude-3-7-sonnet-latest`    |
+
+The prompt is capped at **8 KB**: run name + workflow + branch + failed-job names + top 5 signals per job + last 50 lines per failed job. Output is parsed as JSON; on parse failure the heuristic is used.
+
+## Caching
+
+Each insight is cached in-process per `runId` for 30 minutes. Pass `?refresh=1` to force a re-analysis. The cache is cleared on server restart.
+
+<Aside type="note">
+  Insight calls fetch job logs through your PAT. The PAT never leaves the server — it's read from the `x-github-pat` request header and not logged.
+</Aside>

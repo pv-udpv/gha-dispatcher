@@ -39,6 +39,8 @@ export default defineConfig({
         { label: 'Features', items: [
           { label: 'Multi-repo & rules (v4)', link: '/multi-repo/' },
           { label: 'Live log stream (v5)', link: '/log-stream/' },
+          { label: 'Run intelligence (v6)', link: '/run-intelligence/' },
+          { label: 'Playbooks (v7)', link: '/playbooks/' },
         ]},
         { label: 'Contribute', items: [
           { label: 'StackBlitz-style PR flow', link: '/contribute/pr-flow/' },
