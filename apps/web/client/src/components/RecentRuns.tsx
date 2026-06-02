@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ExternalLink, RefreshCw, ListChecks } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
@@ -18,8 +19,13 @@ function relTime(iso: string): string {
   }
 }
 
-export function RecentRuns() {
+interface RecentRunsProps {
+  onViewLogs?: (run: RunSummary) => void;
+}
+
+export function RecentRuns({ onViewLogs }: RecentRunsProps) {
   const { connected, authHeader } = useGithub();
+  const [hoveredRunId, setHoveredRunId] = useState<number | null>(null);
 
   const runsQ = useQuery<RunSummary[]>({
     queryKey: ["/api/runs"],
@@ -83,7 +89,12 @@ export function RecentRuns() {
             {runsQ.data.map((run) => {
               const state = resolveRunState(run.status, run.conclusion);
               return (
-                <li key={run.id} className="group/row">
+                <li
+                  key={run.id}
+                  className="group/row"
+                  onMouseEnter={() => setHoveredRunId(run.id)}
+                  onMouseLeave={() => setHoveredRunId(null)}
+                >
                   <div
                     className="hover-elevate flex h-11 items-center gap-2.5 px-4"
                     data-testid={`row-run-${run.id}`}
@@ -117,7 +128,11 @@ export function RecentRuns() {
                       </span>
                       <ExternalLink className="h-3.5 w-3.5 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover/row:opacity-100" />
                     </a>
-                    <RunRowActions run={run} />
+                    <RunRowActions
+                      run={run}
+                      onViewLogs={onViewLogs}
+                      isHovered={hoveredRunId === run.id}
+                    />
                   </div>
                 </li>
               );
