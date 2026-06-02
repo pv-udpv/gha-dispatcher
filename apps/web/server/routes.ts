@@ -184,6 +184,20 @@ export async function registerRoutes(
     res.json({ ok: true, repo: REPO });
   });
 
+  // -- Config (public; no auth) -------------------------------------------
+  // Surfaces the configured target repo + owner so the frontend stops hard-coding
+  // "pv-udpv/pplx-lab". Consumed by PatPanel for the fine-grained PAT probe,
+  // by TopBar for display, and by EditorDrawer as the default repo_full.
+  app.get("/api/config", (_req, res) => {
+    const [owner, repo] = REPO.split("/");
+    res.json({
+      repo_full: REPO,
+      owner: owner || "",
+      repo: repo || "",
+      default_branch: inventory.default_branch || "master",
+    });
+  });
+
   // -- Workflows (bundled, no GitHub call) --------------------------------
   app.get("/api/workflows", (_req, res) => {
     res.json({
