@@ -1,0 +1,77 @@
+---
+title: Multi-Repo & Group Rules
+description: Dispatch workflows across any GitHub repo you can access, with regex-based grouping rules.
+---
+
+import { Aside, Card, CardGrid, Badge } from '@astrojs/starlight/components';
+
+`v4` ships **multi-repo support**: the dispatcher no longer hardcodes `pv-udpv/pplx-lab`. You can switch between any repo your PAT can read, cache its workflows in Supabase, and define your own regex rules that classify workflows into labeled tabs.
+
+## Repo switcher
+
+The combobox in the TopBar lists every repo the connected PAT has access to (up to 50, sorted by recent activity). Selecting a repo:
+
+- Updates the URL hash (`#repo=owner/name`).
+- Refetches `/api/repos/:owner/:repo/workflows` (cached 10 min via `repo_cache` in Supabase).
+- Re-keys the **Recent runs** query so the table reloads filtered to the new repo.
+- Toggle <Badge text="all" /> in the runs header to show runs across every repo you've dispatched.
+
+Private repos show a `private` chip. The selected repo persists in the URL hash, not browser storage.
+
+## Group rules
+
+Group rules replace the hardcoded `pv-cargo / pv-sandbox / web` tabs with **user-editable regex classification**. Each repo has its own rule set. Open the **Edit rules** dialog from the TopBar:
+
+<CardGrid>
+  <Card title="Label" icon="document">
+    Tab title shown in the workflow picker (e.g. `infra`, `release`, `tests`).
+  </Card>
+  <Card title="Regex" icon="setting">
+    Tested against `workflow.filename` (basename) and `workflow.name`. First match wins.
+  </Card>
+  <Card title="Order" icon="up-arrow">
+    Lower numbers run earlier; the `.*` catch-all should always be last.
+  </Card>
+</CardGrid>
+
+The right pane shows a **live preview** of how the current workflows would be grouped — no save needed. Workflows that match no rule are pushed into a yellow-bordered `_unmatched` tab.
+
+### Default seed (pv-udpv/pplx-lab)
+
+| Order | Label        | Regex                                            |
+|-------|--------------|--------------------------------------------------|
+| 10    | `pv-cargo`   | `(?i)(cargo\|systemd\|tailscale\|cloudflare)`    |
+| 20    | `pv-sandbox` | `(?i)(sandbox\|e2b\|playwright)`                 |
+| 99    | `web`        | `.*`                                             |
+
+## New endpoints
+
+| Method   | Path                                              | Notes                                |
+|----------|---------------------------------------------------|--------------------------------------|
+| `GET`    | `/api/repos`                                      | User repo list, up to 50             |
+| `GET`    | `/api/repos/:owner/:repo/workflows?refresh=0\|1`  | `WorkflowInventoryV2` (10 min TTL)   |
+| `GET`    | `/api/repos/:owner/:repo/rules`                   | List rules                           |
+| `POST`   | `/api/repos/:owner/:repo/rules`                   | Create                               |
+| `PATCH`  | `/api/rules/:id`                                  | Update label / regex / order         |
+| `DELETE` | `/api/rules/:id`                                  | Remove                               |
+| `POST`   | `/api/repos/:owner/:repo/rules/preview`           | In-memory grouping (no persistence)  |
+| `GET`    | `/api/dispatches?repo_full=&limit=`               | Dispatch log with repo filter        |
+
+## Schema migration
+
+```sql
+CREATE TABLE gha_dispatcher.group_rules (
+  id            uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  repo_full     text NOT NULL,
+  label         text NOT NULL,
+  pattern_regex text NOT NULL,
+  sort_order    int  NOT NULL DEFAULT 100,
+  created_at    timestamptz DEFAULT now()
+);
+ALTER TABLE gha_dispatcher.dispatch_log ADD COLUMN repo_full text NOT NULL;
+CREATE INDEX dispatch_log_repo_idx ON gha_dispatcher.dispatch_log(repo_full, created_at DESC);
+```
+
+<Aside type="note">
+  All new tables ship with RLS enabled and a `service_role`-only policy. The anon role cannot read or write them.
+</Aside>

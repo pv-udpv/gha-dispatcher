@@ -1,0 +1,70 @@
+---
+title: Live Log Stream
+description: Server-Sent Events endpoint that streams Actions logs in near-real-time, with ANSI rendering and follow-tail.
+---
+
+import { Aside, Card, CardGrid } from '@astrojs/starlight/components';
+
+`v5` adds a **sliding log panel** that streams GitHub Actions run logs as they are produced. No more clicking "Open in GitHub" and waiting for the page to load — the panel opens beside the runs table with one keystroke.
+
+## How to open it
+
+- Hover a run row → the actions menu (⋮) reveals a **View logs (L)** item.
+- Press `L` while hovering the row — keyboard shortcut.
+- The panel slides in from the right (~720px wide).
+
+## What you see
+
+<CardGrid>
+  <Card title="Per-job sections" icon="list-format">
+    Each job is a collapsible section with its status icon, name, and duration.
+  </Card>
+  <Card title="ANSI colors" icon="setting">
+    Logs rendered via `ansi-to-html`. Standard colors + `##[error]` red + `##[warning]` yellow.
+  </Card>
+  <Card title="Group folding" icon="up-down-arrows">
+    `##[group]…##[endgroup]` blocks render as nested collapsibles, auto-open while streaming.
+  </Card>
+  <Card title="Follow tail" icon="rocket">
+    Pin auto-scrolls to bottom on every new chunk. Scroll up to pause; click "Jump to latest" to resume.
+  </Card>
+</CardGrid>
+
+## SSE endpoint
+
+```
+GET /api/runs/:id/stream?repo_full=owner/repo
+Headers: x-github-pat: github_pat_...
+```
+
+The endpoint polls every 2 seconds and emits these events:
+
+| Event    | Payload                                                                 |
+|----------|-------------------------------------------------------------------------|
+| `hello`  | `{ runId, repo }` — sent immediately after headers flush                |
+| `status` | `{ status, conclusion, updated_at }` — emitted when run state changes   |
+| `job`    | `{ id, name, status, conclusion, started_at, completed_at, steps[] }`   |
+| `log`    | Raw ANSI bytes for a single job, byte-diffed from previous poll         |
+| `end`    | `{ conclusion }` — emitted when run reaches a terminal state, then close|
+
+<Aside type="caution">
+  **EventSource limitation:** the browser `EventSource` API does not allow custom headers, so the client uses `fetch` + `ReadableStream` with a tiny SSE parser. PAT goes in `x-github-pat`.
+</Aside>
+
+## Concurrency
+
+- Per-PAT cap of **5 concurrent streams**. Over-limit returns `429`.
+- Each stream auto-closes after 30 min or when the run reaches a terminal conclusion.
+- Disconnecting the client (closing the panel) cancels the poller immediately.
+
+## Implementation
+
+- Server module: `apps/web/server/routes-v5.ts` — mounted from `routes.ts` via `app.use(streamRouter)`.
+- Per-job byte cursor: `Map<jobId, number>` to emit only new log bytes each poll.
+- Job logs fetched from `GET /repos/{repo}/actions/jobs/{id}/logs` (302 → plaintext).
+- Client hook: `useLogStream({ runId, repoFull, enabled, pat })` returns `{ status, jobs, logsByJob, isOpen, error, close, isFollowing, setFollowing }`.
+- Component: `LogStreamPanel.tsx` — shadcn `Sheet` with right slide-in.
+
+## Downloads
+
+Click **Download logs** in the panel header to assemble the current per-job buffers into a single `run-{id}.log` Blob — useful when a CI failure happens, you want to attach the log to an issue, and the GitHub Actions UI is still spinning on "Download log archive".

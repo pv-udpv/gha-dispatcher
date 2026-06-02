@@ -36,6 +36,10 @@ export default defineConfig({
           { label: 'Endpoints', link: '/api/' },
           { label: 'Schemas', link: '/api/schemas/' },
         ]},
+        { label: 'Features', items: [
+          { label: 'Multi-repo & rules (v4)', link: '/multi-repo/' },
+          { label: 'Live log stream (v5)', link: '/log-stream/' },
+        ]},
         { label: 'Contribute', items: [
           { label: 'StackBlitz-style PR flow', link: '/contribute/pr-flow/' },
           { label: 'Local development', link: '/contribute/local-dev/' },
