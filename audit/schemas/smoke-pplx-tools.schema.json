@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/smoke-pplx-tools.schema.json",
+  "title": "Smoke pplx-tools MCP target",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/smoke-pplx-tools.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {},
+  "required": [],
+  "x-workflow-name": "Smoke pplx-tools MCP target",
+  "x-workflow-path": ".github/workflows/smoke-pplx-tools.yml",
+  "x-input-order": []
+}

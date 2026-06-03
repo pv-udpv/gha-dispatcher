@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/adr-055-kg-sync.schema.json",
+  "title": "ADR-055 KG Sync (0_ protocol)",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/adr-055-kg-sync.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "dry_run": {
+      "type": "string",
+      "enum": [
+        "false",
+        "true"
+      ],
+      "default": "false",
+      "description": "Dry run (print changes without writing to DB)",
+      "x-gha-type": "choice",
+      "x-gha-required": false
+    },
+    "backfill_mode": {
+      "type": "string",
+      "enum": [
+        "on-touch",
+        "full-backfill"
+      ],
+      "default": "on-touch",
+      "description": "Sync mode. on-touch (default): edges written only when entity content changed. full-backfill: retroactive pass over all entities (ops-only, never available to scheduled cron).",
+      "x-gha-type": "choice",
+      "x-gha-required": false
+    }
+  },
+  "required": [],
+  "x-workflow-name": "ADR-055 KG Sync (0_ protocol)",
+  "x-workflow-path": ".github/workflows/adr-055-kg-sync.yml",
+  "x-input-order": [
+    "dry_run",
+    "backfill_mode"
+  ]
+}

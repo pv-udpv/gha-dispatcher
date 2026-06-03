@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/comet-pipeline.schema.json",
+  "title": "comet-pipeline",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/comet-pipeline.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "force_version": {
+      "type": "string",
+      "description": "Force a specific Comet version (skips ingest no-op check)",
+      "x-gha-type": "string",
+      "x-gha-required": false
+    },
+    "skip_ingest": {
+      "type": "boolean",
+      "default": false,
+      "description": "Reuse existing api_surface.json (skip CRX ingest)",
+      "x-gha-type": "boolean",
+      "x-gha-required": false
+    }
+  },
+  "required": [],
+  "x-workflow-name": "comet-pipeline",
+  "x-workflow-path": ".github/workflows/comet-pipeline.yml",
+  "x-input-order": [
+    "force_version",
+    "skip_ingest"
+  ]
+}

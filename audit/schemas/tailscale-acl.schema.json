@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/tailscale-acl.schema.json",
+  "title": "Tailscale ACL",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/tailscale-acl.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {},
+  "required": [],
+  "x-workflow-name": "Tailscale ACL",
+  "x-workflow-path": ".github/workflows/tailscale-acl.yml",
+  "x-input-order": []
+}

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/check-agw.schema.json",
+  "title": "Check agentgateway version + http target docs",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/check-agw.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {},
+  "required": [],
+  "x-workflow-name": "Check agentgateway version + http target docs",
+  "x-workflow-path": ".github/workflows/check-agw.yml",
+  "x-input-order": []
+}

@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/deploy-pplx-rest-mcp.schema.json",
+  "title": "Deploy pplx-rest-mcp to pv-cargo",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/deploy-pplx-rest-mcp.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "branch": {
+      "type": "string",
+      "default": "pplx/feat/pplx-rest-proxy",
+      "description": "Branch to deploy from",
+      "x-gha-type": "string",
+      "x-gha-required": true
+    },
+    "reload_agentgateway": {
+      "type": "boolean",
+      "default": true,
+      "description": "Reload AgentGateway after MCP config sync",
+      "x-gha-type": "boolean",
+      "x-gha-required": false
+    }
+  },
+  "required": [
+    "branch"
+  ],
+  "x-workflow-name": "Deploy pplx-rest-mcp to pv-cargo",
+  "x-workflow-path": ".github/workflows/deploy-pplx-rest-mcp.yml",
+  "x-input-order": [
+    "branch",
+    "reload_agentgateway"
+  ]
+}

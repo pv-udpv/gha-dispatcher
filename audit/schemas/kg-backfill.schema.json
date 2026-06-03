@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/kg-backfill.schema.json",
+  "title": "KG Embedding Backfill",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/kg-backfill.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "batch_size": {
+      "type": "string",
+      "default": "100",
+      "description": "Batch size for embedding generation",
+      "x-gha-type": "string",
+      "x-gha-required": false
+    }
+  },
+  "required": [],
+  "x-workflow-name": "KG Embedding Backfill",
+  "x-workflow-path": ".github/workflows/kg-backfill.yml",
+  "x-input-order": [
+    "batch_size"
+  ]
+}

@@ -1,0 +1,2243 @@
+{
+  "generated_at": "2026-06-03T00:27:43.504544Z",
+  "repo": "pv-udpv/pplx-lab",
+  "stats": {
+    "total_workflow_files": 72,
+    "with_workflow_dispatch": 46,
+    "parse_errors": 0,
+    "total_findings": 8,
+    "findings_by_kind": {
+      "required_without_default": 7,
+      "boolean_default_quoted": 1
+    }
+  },
+  "workflows": {
+    "a2a-agw-fix": {
+      "name": "Fix AGW A2A config and deploy CLI runners",
+      "path": ".github/workflows/a2a-agw-fix.yml",
+      "has_dispatch": true,
+      "declared_inputs": [
+        "deploy_cli_runners"
+      ],
+      "input_count": 1,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/a2a-agw-fix.schema.json",
+        "title": "Fix AGW A2A config and deploy CLI runners",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/a2a-agw-fix.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "deploy_cli_runners": {
+            "type": "boolean",
+            "default": true,
+            "description": "Deploy claude-code and codex-cli A2A nodes",
+            "x-gha-type": "boolean",
+            "x-gha-required": false
+          }
+        },
+        "required": [],
+        "x-workflow-name": "Fix AGW A2A config and deploy CLI runners",
+        "x-workflow-path": ".github/workflows/a2a-agw-fix.yml",
+        "x-input-order": [
+          "deploy_cli_runners"
+        ]
+      }
+    },
+    "adr-055-export": {
+      "name": "ADR-055 export check",
+      "path": ".github/workflows/adr-055-export.yml",
+      "has_dispatch": false,
+      "declared_inputs": [],
+      "input_count": 0,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": null
+    },
+    "adr-055-kg-sync": {
+      "name": "ADR-055 KG Sync (0_ protocol)",
+      "path": ".github/workflows/adr-055-kg-sync.yml",
+      "has_dispatch": true,
+      "declared_inputs": [
+        "backfill_mode",
+        "dry_run"
+      ],
+      "input_count": 2,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/adr-055-kg-sync.schema.json",
+        "title": "ADR-055 KG Sync (0_ protocol)",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/adr-055-kg-sync.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "dry_run": {
+            "type": "string",
+            "enum": [
+              "false",
+              "true"
+            ],
+            "default": "false",
+            "description": "Dry run (print changes without writing to DB)",
+            "x-gha-type": "choice",
+            "x-gha-required": false
+          },
+          "backfill_mode": {
+            "type": "string",
+            "enum": [
+              "on-touch",
+              "full-backfill"
+            ],
+            "default": "on-touch",
+            "description": "Sync mode. on-touch (default): edges written only when entity content changed. full-backfill: retroactive pass over all entities (ops-only, never available to scheduled cron).",
+            "x-gha-type": "choice",
+            "x-gha-required": false
+          }
+        },
+        "required": [],
+        "x-workflow-name": "ADR-055 KG Sync (0_ protocol)",
+        "x-workflow-path": ".github/workflows/adr-055-kg-sync.yml",
+        "x-input-order": [
+          "dry_run",
+          "backfill_mode"
+        ]
+      }
+    },
+    "adr-055-lint": {
+      "name": "ADR-055 0_ lint",
+      "path": ".github/workflows/adr-055-lint.yml",
+      "has_dispatch": false,
+      "declared_inputs": [],
+      "input_count": 0,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": null
+    },
+    "agent-fix": {
+      "name": "Agent-Fix Chain",
+      "path": ".github/workflows/agent-fix.yml",
+      "has_dispatch": true,
+      "declared_inputs": [
+        "badge",
+        "issue_number",
+        "plan",
+        "space_uuid"
+      ],
+      "input_count": 4,
+      "undeclared_refs": [],
+      "findings": [
+        {
+          "severity": "warn",
+          "kind": "required_without_default",
+          "input": "issue_number",
+          "message": "`issue_number` is required:true but has no default \u2014 dispatcher UI must require user input."
+        }
+      ],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/agent-fix.schema.json",
+        "title": "Agent-Fix Chain",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/agent-fix.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "issue_number": {
+            "type": "string",
+            "description": "GitHub issue number to fix (body becomes chain goal)",
+            "x-gha-type": "string",
+            "x-gha-required": true
+          },
+          "plan": {
+            "type": "string",
+            "enum": [
+              "dual-agent-review",
+              "full-cycle",
+              "tiered-research"
+            ],
+            "default": "dual-agent-review",
+            "description": "agent_runner plan name",
+            "x-gha-type": "choice",
+            "x-gha-required": false
+          },
+          "space_uuid": {
+            "type": "string",
+            "default": "954c3e4b-1928-49dc-b5a9-84f32f9359b4",
+            "description": "X-Pplx-Space UUID (for thread scoping)",
+            "x-gha-type": "string",
+            "x-gha-required": false
+          },
+          "badge": {
+            "type": "string",
+            "default": "agent-fix",
+            "description": "X-Pplx-Badge label shown in the Perplexity UI",
+            "x-gha-type": "string",
+            "x-gha-required": false
+          }
+        },
+        "required": [
+          "issue_number"
+        ],
+        "x-workflow-name": "Agent-Fix Chain",
+        "x-workflow-path": ".github/workflows/agent-fix.yml",
+        "x-input-order": [
+          "issue_number",
+          "plan",
+          "space_uuid",
+          "badge"
+        ]
+      }
+    },
+    "agw-bootstrap": {
+      "name": "AGW Bootstrap (ZBS-67/69)",
+      "path": ".github/workflows/agw-bootstrap.yml",
+      "has_dispatch": true,
+      "declared_inputs": [
+        "sandbox_pubkey"
+      ],
+      "input_count": 1,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": true,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/agw-bootstrap.schema.json",
+        "title": "AGW Bootstrap (ZBS-67/69)",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/agw-bootstrap.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "sandbox_pubkey": {
+            "type": "string",
+            "description": "Sandbox SSH public key to authorize",
+            "x-gha-type": "string",
+            "x-gha-required": false
+          }
+        },
+        "required": [],
+        "x-workflow-name": "AGW Bootstrap (ZBS-67/69)",
+        "x-workflow-path": ".github/workflows/agw-bootstrap.yml",
+        "x-input-order": [
+          "sandbox_pubkey"
+        ]
+      }
+    },
+    "agw-k8s-bootstrap": {
+      "name": "AGW K8s Bootstrap (ADR-097) \u2014 lazy validate",
+      "path": ".github/workflows/agw-k8s-bootstrap.yml",
+      "has_dispatch": true,
+      "declared_inputs": [
+        "intent"
+      ],
+      "input_count": 1,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/agw-k8s-bootstrap.schema.json",
+        "title": "AGW K8s Bootstrap (ADR-097) \u2014 lazy validate",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/agw-k8s-bootstrap.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "intent": {
+            "type": "string",
+            "enum": [
+              "all",
+              "local-minikube",
+              "e2b-tailnet-mcp",
+              "vault-secrets",
+              "ci-quality-gate",
+              "pplx-dxt-source",
+              "debug-401-503",
+              "e2b-tsnet-mcp",
+              "ingress-cf-dns",
+              "tsnet-funnel"
+            ],
+            "default": "all",
+            "description": "Intent to lazy-run (or \"all\" for every intent)",
+            "x-gha-type": "choice",
+            "x-gha-required": false
+          }
+        },
+        "required": [],
+        "x-workflow-name": "AGW K8s Bootstrap (ADR-097) \u2014 lazy validate",
+        "x-workflow-path": ".github/workflows/agw-k8s-bootstrap.yml",
+        "x-input-order": [
+          "intent"
+        ]
+      }
+    },
+    "agw-mcp-diag": {
+      "name": "AGW MCP backend diagnostics",
+      "path": ".github/workflows/agw-mcp-diag.yml",
+      "has_dispatch": false,
+      "declared_inputs": [],
+      "input_count": 0,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": null
+    },
+    "agw-smoke": {
+      "name": "AGW Smoke (ZBS-98)",
+      "path": ".github/workflows/agw-smoke.yml",
+      "has_dispatch": false,
+      "declared_inputs": [],
+      "input_count": 0,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": null
+    },
+    "architecture-explorer": {
+      "name": "architecture-explorer",
+      "path": ".github/workflows/architecture-explorer.yml",
+      "has_dispatch": false,
+      "declared_inputs": [],
+      "input_count": 0,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": null
+    },
+    "authorize-sandbox": {
+      "name": "Authorize Sandbox Key",
+      "path": ".github/workflows/authorize-sandbox.yml",
+      "has_dispatch": true,
+      "declared_inputs": [
+        "pubkey"
+      ],
+      "input_count": 1,
+      "undeclared_refs": [],
+      "findings": [
+        {
+          "severity": "warn",
+          "kind": "required_without_default",
+          "input": "pubkey",
+          "message": "`pubkey` is required:true but has no default \u2014 dispatcher UI must require user input."
+        }
+      ],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/authorize-sandbox.schema.json",
+        "title": "Authorize Sandbox Key",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/authorize-sandbox.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "pubkey": {
+            "type": "string",
+            "description": "SSH public key to authorize on pv-cargo for user pv",
+            "x-gha-type": "string",
+            "x-gha-required": true
+          }
+        },
+        "required": [
+          "pubkey"
+        ],
+        "x-workflow-name": "Authorize Sandbox Key",
+        "x-workflow-path": ".github/workflows/authorize-sandbox.yml",
+        "x-input-order": [
+          "pubkey"
+        ]
+      }
+    },
+    "automerge": {
+      "name": "Control Tower \u2014 Automerge",
+      "path": ".github/workflows/automerge.yml",
+      "has_dispatch": true,
+      "declared_inputs": [
+        "dry_run"
+      ],
+      "input_count": 1,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/automerge.schema.json",
+        "title": "Control Tower \u2014 Automerge",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/automerge.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "dry_run": {
+            "type": "boolean",
+            "default": false,
+            "description": "Dry run (log only, no merge)",
+            "x-gha-type": "boolean",
+            "x-gha-required": false
+          }
+        },
+        "required": [],
+        "x-workflow-name": "Control Tower \u2014 Automerge",
+        "x-workflow-path": ".github/workflows/automerge.yml",
+        "x-input-order": [
+          "dry_run"
+        ]
+      }
+    },
+    "cg-upsert-once": {
+      "name": "CG Direct Upsert (one-off)",
+      "path": ".github/workflows/cg-upsert-once.yml",
+      "has_dispatch": true,
+      "declared_inputs": [
+        "all_nodes",
+        "since"
+      ],
+      "input_count": 2,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/cg-upsert-once.schema.json",
+        "title": "CG Direct Upsert (one-off)",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/cg-upsert-once.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "since": {
+            "type": "string",
+            "default": "2026-05-13",
+            "description": "Upsert nodes captured >= date (YYYY-MM-DD)",
+            "x-gha-type": "string",
+            "x-gha-required": false
+          },
+          "all_nodes": {
+            "type": "boolean",
+            "default": false,
+            "description": "Upsert all nodes (ignore --since)",
+            "x-gha-type": "boolean",
+            "x-gha-required": false
+          }
+        },
+        "required": [],
+        "x-workflow-name": "CG Direct Upsert (one-off)",
+        "x-workflow-path": ".github/workflows/cg-upsert-once.yml",
+        "x-input-order": [
+          "since",
+          "all_nodes"
+        ]
+      }
+    },
+    "check-agw": {
+      "name": "Check agentgateway version + http target docs",
+      "path": ".github/workflows/check-agw.yml",
+      "has_dispatch": true,
+      "declared_inputs": [],
+      "input_count": 0,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/check-agw.schema.json",
+        "title": "Check agentgateway version + http target docs",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/check-agw.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "x-workflow-name": "Check agentgateway version + http target docs",
+        "x-workflow-path": ".github/workflows/check-agw.yml",
+        "x-input-order": []
+      }
+    },
+    "claude-plugin-to-fastmcp": {
+      "name": "claude-plugin-to-fastmcp",
+      "path": ".github/workflows/claude-plugin-to-fastmcp.yml",
+      "has_dispatch": false,
+      "declared_inputs": [],
+      "input_count": 0,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": null
+    },
+    "comet-drift": {
+      "name": "comet-drift",
+      "path": ".github/workflows/comet-drift.yml",
+      "has_dispatch": true,
+      "declared_inputs": [
+        "channels",
+        "strict"
+      ],
+      "input_count": 2,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/comet-drift.schema.json",
+        "title": "comet-drift",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/comet-drift.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "channels": {
+            "type": "string",
+            "default": "stable,dev,canary",
+            "description": "CRX channels to probe (comma-separated, e.g. stable,dev,canary)",
+            "x-gha-type": "string",
+            "x-gha-required": false
+          },
+          "strict": {
+            "type": "boolean",
+            "default": true,
+            "description": "Fail the job on drift (default true)",
+            "x-gha-type": "boolean",
+            "x-gha-required": false
+          }
+        },
+        "required": [],
+        "x-workflow-name": "comet-drift",
+        "x-workflow-path": ".github/workflows/comet-drift.yml",
+        "x-input-order": [
+          "channels",
+          "strict"
+        ]
+      }
+    },
+    "comet-enum-watch": {
+      "name": "comet-enum-watch",
+      "path": ".github/workflows/comet-enum-watch.yml",
+      "has_dispatch": true,
+      "declared_inputs": [
+        "cdp_host",
+        "force_notify"
+      ],
+      "input_count": 2,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/comet-enum-watch.schema.json",
+        "title": "comet-enum-watch",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/comet-enum-watch.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "cdp_host": {
+            "type": "string",
+            "default": "localhost:9222",
+            "description": "CDP host:port (default: localhost:9222)",
+            "x-gha-type": "string",
+            "x-gha-required": false
+          },
+          "force_notify": {
+            "type": "boolean",
+            "default": false,
+            "description": "Always send notification even if no drift",
+            "x-gha-type": "boolean",
+            "x-gha-required": false
+          }
+        },
+        "required": [],
+        "x-workflow-name": "comet-enum-watch",
+        "x-workflow-path": ".github/workflows/comet-enum-watch.yml",
+        "x-input-order": [
+          "cdp_host",
+          "force_notify"
+        ]
+      }
+    },
+    "comet-pipeline": {
+      "name": "comet-pipeline",
+      "path": ".github/workflows/comet-pipeline.yml",
+      "has_dispatch": true,
+      "declared_inputs": [
+        "force_version",
+        "skip_ingest"
+      ],
+      "input_count": 2,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/comet-pipeline.schema.json",
+        "title": "comet-pipeline",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/comet-pipeline.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "force_version": {
+            "type": "string",
+            "description": "Force a specific Comet version (skips ingest no-op check)",
+            "x-gha-type": "string",
+            "x-gha-required": false
+          },
+          "skip_ingest": {
+            "type": "boolean",
+            "default": false,
+            "description": "Reuse existing api_surface.json (skip CRX ingest)",
+            "x-gha-type": "boolean",
+            "x-gha-required": false
+          }
+        },
+        "required": [],
+        "x-workflow-name": "comet-pipeline",
+        "x-workflow-path": ".github/workflows/comet-pipeline.yml",
+        "x-input-order": [
+          "force_version",
+          "skip_ingest"
+        ]
+      }
+    },
+    "comet-preflight": {
+      "name": "comet-preflight",
+      "path": ".github/workflows/comet-preflight.yml",
+      "has_dispatch": true,
+      "declared_inputs": [
+        "force_notify"
+      ],
+      "input_count": 1,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/comet-preflight.schema.json",
+        "title": "comet-preflight",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/comet-preflight.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "force_notify": {
+            "type": "boolean",
+            "default": false,
+            "description": "Notify even if all checks pass",
+            "x-gha-type": "boolean",
+            "x-gha-required": false
+          }
+        },
+        "required": [],
+        "x-workflow-name": "comet-preflight",
+        "x-workflow-path": ".github/workflows/comet-preflight.yml",
+        "x-input-order": [
+          "force_notify"
+        ]
+      }
+    },
+    "copilot-setup-steps": {
+      "name": "Copilot Setup",
+      "path": ".github/workflows/copilot-setup-steps.yml",
+      "has_dispatch": false,
+      "declared_inputs": [],
+      "input_count": 0,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": null
+    },
+    "d2-render": {
+      "name": "D2 Render \u2014 ADR-054",
+      "path": ".github/workflows/d2-render.yml",
+      "has_dispatch": false,
+      "declared_inputs": [],
+      "input_count": 0,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": null
+    },
+    "deploy-plugin-mcp": {
+      "name": "Deploy plugin-mcp to Supabase",
+      "path": ".github/workflows/deploy-plugin-mcp.yml",
+      "has_dispatch": true,
+      "declared_inputs": [
+        "force"
+      ],
+      "input_count": 1,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/deploy-plugin-mcp.schema.json",
+        "title": "Deploy plugin-mcp to Supabase",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/deploy-plugin-mcp.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "force": {
+            "type": "boolean",
+            "default": true,
+            "description": "Force re-deploy",
+            "x-gha-type": "boolean",
+            "x-gha-required": false
+          }
+        },
+        "required": [],
+        "x-workflow-name": "Deploy plugin-mcp to Supabase",
+        "x-workflow-path": ".github/workflows/deploy-plugin-mcp.yml",
+        "x-input-order": [
+          "force"
+        ]
+      }
+    },
+    "deploy-pplx-proxy": {
+      "name": "Deploy pplx-proxy to Supabase",
+      "path": ".github/workflows/deploy-pplx-proxy.yml",
+      "has_dispatch": true,
+      "declared_inputs": [
+        "force"
+      ],
+      "input_count": 1,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/deploy-pplx-proxy.schema.json",
+        "title": "Deploy pplx-proxy to Supabase",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/deploy-pplx-proxy.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "force": {
+            "type": "boolean",
+            "default": false,
+            "description": "Skip the /healthz version-diff gate (force re-deploy)",
+            "x-gha-type": "boolean",
+            "x-gha-required": false
+          }
+        },
+        "required": [],
+        "x-workflow-name": "Deploy pplx-proxy to Supabase",
+        "x-workflow-path": ".github/workflows/deploy-pplx-proxy.yml",
+        "x-input-order": [
+          "force"
+        ]
+      }
+    },
+    "deploy-pplx-rest-mcp": {
+      "name": "Deploy pplx-rest-mcp to pv-cargo",
+      "path": ".github/workflows/deploy-pplx-rest-mcp.yml",
+      "has_dispatch": true,
+      "declared_inputs": [
+        "branch",
+        "reload_agentgateway"
+      ],
+      "input_count": 2,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/deploy-pplx-rest-mcp.schema.json",
+        "title": "Deploy pplx-rest-mcp to pv-cargo",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/deploy-pplx-rest-mcp.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "branch": {
+            "type": "string",
+            "default": "pplx/feat/pplx-rest-proxy",
+            "description": "Branch to deploy from",
+            "x-gha-type": "string",
+            "x-gha-required": true
+          },
+          "reload_agentgateway": {
+            "type": "boolean",
+            "default": true,
+            "description": "Reload AgentGateway after MCP config sync",
+            "x-gha-type": "boolean",
+            "x-gha-required": false
+          }
+        },
+        "required": [
+          "branch"
+        ],
+        "x-workflow-name": "Deploy pplx-rest-mcp to pv-cargo",
+        "x-workflow-path": ".github/workflows/deploy-pplx-rest-mcp.yml",
+        "x-input-order": [
+          "branch",
+          "reload_agentgateway"
+        ]
+      }
+    },
+    "deploy-pv-cargo": {
+      "name": "Deploy to pv-cargo",
+      "path": ".github/workflows/deploy-pv-cargo.yml",
+      "has_dispatch": true,
+      "declared_inputs": [
+        "deploy_wave_403"
+      ],
+      "input_count": 1,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/deploy-pv-cargo.schema.json",
+        "title": "Deploy to pv-cargo",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/deploy-pv-cargo.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "deploy_wave_403": {
+            "type": "boolean",
+            "default": false,
+            "description": "Deploy Wave-403 pydantic-ai supervisor to pv-cargo",
+            "x-gha-type": "boolean",
+            "x-gha-required": false
+          }
+        },
+        "required": [],
+        "x-workflow-name": "Deploy to pv-cargo",
+        "x-workflow-path": ".github/workflows/deploy-pv-cargo.yml",
+        "x-input-order": [
+          "deploy_wave_403"
+        ]
+      }
+    },
+    "diff-smoke-v3-nightly": {
+      "name": "diff-smoke-v3 nightly",
+      "path": ".github/workflows/diff-smoke-v3-nightly.yml",
+      "has_dispatch": false,
+      "declared_inputs": [],
+      "input_count": 0,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": null
+    },
+    "discover-pv-cargo": {
+      "name": "Discover pv-cargo",
+      "path": ".github/workflows/discover-pv-cargo.yml",
+      "has_dispatch": true,
+      "declared_inputs": [],
+      "input_count": 0,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/discover-pv-cargo.schema.json",
+        "title": "Discover pv-cargo",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/discover-pv-cargo.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "x-workflow-name": "Discover pv-cargo",
+        "x-workflow-path": ".github/workflows/discover-pv-cargo.yml",
+        "x-input-order": []
+      }
+    },
+    "embed-backfill-hf": {
+      "name": "KG Embeddings Backfill (HF Inference)",
+      "path": ".github/workflows/embed-backfill-hf.yml",
+      "has_dispatch": true,
+      "declared_inputs": [
+        "batch_size",
+        "force"
+      ],
+      "input_count": 2,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/embed-backfill-hf.schema.json",
+        "title": "KG Embeddings Backfill (HF Inference)",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/embed-backfill-hf.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "force": {
+            "type": "boolean",
+            "default": false,
+            "description": "Re-embed all entities (even with existing embeddings)",
+            "x-gha-type": "boolean",
+            "x-gha-required": false
+          },
+          "batch_size": {
+            "type": "string",
+            "default": "32",
+            "description": "HF Inference batch size",
+            "x-gha-type": "string",
+            "x-gha-required": false
+          }
+        },
+        "required": [],
+        "x-workflow-name": "KG Embeddings Backfill (HF Inference)",
+        "x-workflow-path": ".github/workflows/embed-backfill-hf.yml",
+        "x-input-order": [
+          "force",
+          "batch_size"
+        ]
+      }
+    },
+    "embed-backfill": {
+      "name": "KG Embeddings Backfill",
+      "path": ".github/workflows/embed-backfill.yml",
+      "has_dispatch": true,
+      "declared_inputs": [
+        "force"
+      ],
+      "input_count": 1,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/embed-backfill.schema.json",
+        "title": "KG Embeddings Backfill",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/embed-backfill.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "force": {
+            "type": "boolean",
+            "default": false,
+            "description": "Re-embed all entities (even with existing embeddings)",
+            "x-gha-type": "boolean",
+            "x-gha-required": false
+          }
+        },
+        "required": [],
+        "x-workflow-name": "KG Embeddings Backfill",
+        "x-workflow-path": ".github/workflows/embed-backfill.yml",
+        "x-input-order": [
+          "force"
+        ]
+      }
+    },
+    "experiment-engine": {
+      "name": "Experiment Engine \u2014 Self-Hosted",
+      "path": ".github/workflows/experiment-engine.yml",
+      "has_dispatch": true,
+      "declared_inputs": [
+        "context_uuid",
+        "experiment_id",
+        "extra_args",
+        "task"
+      ],
+      "input_count": 4,
+      "undeclared_refs": [],
+      "findings": [
+        {
+          "severity": "warn",
+          "kind": "required_without_default",
+          "input": "task",
+          "message": "`task` is required:true but has no default \u2014 dispatcher UI must require user input."
+        }
+      ],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/experiment-engine.schema.json",
+        "title": "Experiment Engine \u2014 Self-Hosted",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/experiment-engine.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "task": {
+            "type": "string",
+            "enum": [
+              "smoke-test",
+              "lint",
+              "run-experiment",
+              "sync-supabase",
+              "collect-evidence"
+            ],
+            "description": "Task to run",
+            "x-gha-type": "choice",
+            "x-gha-required": true
+          },
+          "experiment_id": {
+            "type": "string",
+            "description": "Experiment ID (for run-experiment/collect-evidence)",
+            "x-gha-type": "string",
+            "x-gha-required": false
+          },
+          "context_uuid": {
+            "type": "string",
+            "description": "Thread context_uuid (for run-experiment)",
+            "x-gha-type": "string",
+            "x-gha-required": false
+          },
+          "extra_args": {
+            "type": "string",
+            "description": "Extra arguments passed to the task",
+            "x-gha-type": "string",
+            "x-gha-required": false
+          }
+        },
+        "required": [
+          "task"
+        ],
+        "x-workflow-name": "Experiment Engine \u2014 Self-Hosted",
+        "x-workflow-path": ".github/workflows/experiment-engine.yml",
+        "x-input-order": [
+          "task",
+          "experiment_id",
+          "context_uuid",
+          "extra_args"
+        ]
+      }
+    },
+    "fleet-e2e": {
+      "name": "Fleet E2E (ADR-048)",
+      "path": ".github/workflows/fleet-e2e.yml",
+      "has_dispatch": true,
+      "declared_inputs": [
+        "deploy_before_run",
+        "include_waven",
+        "install_node",
+        "pytest_extra",
+        "pytest_k"
+      ],
+      "input_count": 5,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/fleet-e2e.schema.json",
+        "title": "Fleet E2E (ADR-048)",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/fleet-e2e.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "include_waven": {
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "default": "1",
+            "description": "Include H4 (Wave-N BA smoke, ~2min)",
+            "x-gha-type": "choice",
+            "x-gha-required": false
+          },
+          "pytest_k": {
+            "type": "string",
+            "default": "",
+            "description": "pytest -k expression (empty = all hops)",
+            "x-gha-type": "string",
+            "x-gha-required": false
+          },
+          "pytest_extra": {
+            "type": "string",
+            "default": "-v -rs",
+            "description": "Extra pytest args (default: -v -rs to print skip reasons)",
+            "x-gha-type": "string",
+            "x-gha-required": false
+          },
+          "deploy_before_run": {
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "default": "0",
+            "description": "Sync /home/pv/pplx-lab to this branch+SHA and restart agentgateway before the hop matrix",
+            "x-gha-type": "choice",
+            "x-gha-required": false
+          },
+          "install_node": {
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "default": "1",
+            "description": "Install Node.js 22 on the runner (enables H0b @modelcontextprotocol/conformance; v22+ required for fs.globSync)",
+            "x-gha-type": "choice",
+            "x-gha-required": false
+          }
+        },
+        "required": [],
+        "x-workflow-name": "Fleet E2E (ADR-048)",
+        "x-workflow-path": ".github/workflows/fleet-e2e.yml",
+        "x-input-order": [
+          "include_waven",
+          "pytest_k",
+          "pytest_extra",
+          "deploy_before_run",
+          "install_node"
+        ]
+      }
+    },
+    "gitleaks": {
+      "name": "Gitleaks Repo Scan",
+      "path": ".github/workflows/gitleaks.yml",
+      "has_dispatch": false,
+      "declared_inputs": [],
+      "input_count": 0,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": null
+    },
+    "hf-artifacts": {
+      "name": "hf-artifacts",
+      "path": ".github/workflows/hf-artifacts.yml",
+      "has_dispatch": true,
+      "declared_inputs": [
+        "force-refresh"
+      ],
+      "input_count": 1,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/hf-artifacts.schema.json",
+        "title": "hf-artifacts",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/hf-artifacts.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "force-refresh": {
+            "type": "boolean",
+            "default": false,
+            "description": "Force re-download even if cache key matches",
+            "x-gha-type": "boolean",
+            "x-gha-required": false
+          }
+        },
+        "required": [],
+        "x-workflow-name": "hf-artifacts",
+        "x-workflow-path": ".github/workflows/hf-artifacts.yml",
+        "x-input-order": [
+          "force-refresh"
+        ]
+      }
+    },
+    "inspect-mcp-app": {
+      "name": "Inspect gateway-pplx-tools app.py",
+      "path": ".github/workflows/inspect-mcp-app.yml",
+      "has_dispatch": true,
+      "declared_inputs": [],
+      "input_count": 0,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/inspect-mcp-app.schema.json",
+        "title": "Inspect gateway-pplx-tools app.py",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/inspect-mcp-app.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "x-workflow-name": "Inspect gateway-pplx-tools app.py",
+        "x-workflow-path": ".github/workflows/inspect-mcp-app.yml",
+        "x-input-order": []
+      }
+    },
+    "inspect-pv-cargo": {
+      "name": "Inspect pv-cargo MCP topology",
+      "path": ".github/workflows/inspect-pv-cargo.yml",
+      "has_dispatch": true,
+      "declared_inputs": [],
+      "input_count": 0,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/inspect-pv-cargo.schema.json",
+        "title": "Inspect pv-cargo MCP topology",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/inspect-pv-cargo.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "x-workflow-name": "Inspect pv-cargo MCP topology",
+        "x-workflow-path": ".github/workflows/inspect-pv-cargo.yml",
+        "x-input-order": []
+      }
+    },
+    "kg-backfill": {
+      "name": "KG Embedding Backfill",
+      "path": ".github/workflows/kg-backfill.yml",
+      "has_dispatch": true,
+      "declared_inputs": [
+        "batch_size"
+      ],
+      "input_count": 1,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/kg-backfill.schema.json",
+        "title": "KG Embedding Backfill",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/kg-backfill.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "batch_size": {
+            "type": "string",
+            "default": "100",
+            "description": "Batch size for embedding generation",
+            "x-gha-type": "string",
+            "x-gha-required": false
+          }
+        },
+        "required": [],
+        "x-workflow-name": "KG Embedding Backfill",
+        "x-workflow-path": ".github/workflows/kg-backfill.yml",
+        "x-input-order": [
+          "batch_size"
+        ]
+      }
+    },
+    "kg-curator-promote": {
+      "name": "KG Curator Promote",
+      "path": ".github/workflows/kg-curator-promote.yml",
+      "has_dispatch": true,
+      "declared_inputs": [
+        "min_confidence"
+      ],
+      "input_count": 1,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/kg-curator-promote.schema.json",
+        "title": "KG Curator Promote",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/kg-curator-promote.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "min_confidence": {
+            "type": "string",
+            "default": "0.80",
+            "description": "Minimum confidence threshold for promotion",
+            "x-gha-type": "string",
+            "x-gha-required": false
+          }
+        },
+        "required": [],
+        "x-workflow-name": "KG Curator Promote",
+        "x-workflow-path": ".github/workflows/kg-curator-promote.yml",
+        "x-input-order": [
+          "min_confidence"
+        ]
+      }
+    },
+    "ligolo-proxy-start": {
+      "name": "ligolo-proxy-start",
+      "path": ".github/workflows/ligolo-proxy-start.yml",
+      "has_dispatch": true,
+      "declared_inputs": [
+        "port"
+      ],
+      "input_count": 1,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/ligolo-proxy-start.schema.json",
+        "title": "ligolo-proxy-start",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/ligolo-proxy-start.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "port": {
+            "type": "string",
+            "default": "11601",
+            "description": "Listen port",
+            "x-gha-type": "string",
+            "x-gha-required": false
+          }
+        },
+        "required": [],
+        "x-workflow-name": "ligolo-proxy-start",
+        "x-workflow-path": ".github/workflows/ligolo-proxy-start.yml",
+        "x-input-order": [
+          "port"
+        ]
+      }
+    },
+    "load-test": {
+      "name": "Load test \u2014 llm-proxy",
+      "path": ".github/workflows/load-test.yml",
+      "has_dispatch": true,
+      "declared_inputs": [
+        "proxy_url",
+        "run_time",
+        "spawn_rate",
+        "users"
+      ],
+      "input_count": 4,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/load-test.schema.json",
+        "title": "Load test \u2014 llm-proxy",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/load-test.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "users": {
+            "type": "string",
+            "default": "10",
+            "description": "Number of concurrent users",
+            "x-gha-type": "string",
+            "x-gha-required": true
+          },
+          "spawn_rate": {
+            "type": "string",
+            "default": "2",
+            "description": "Users spawned per second",
+            "x-gha-type": "string",
+            "x-gha-required": true
+          },
+          "run_time": {
+            "type": "string",
+            "default": "30s",
+            "description": "Test duration (e.g. 30s, 2m)",
+            "x-gha-type": "string",
+            "x-gha-required": true
+          },
+          "proxy_url": {
+            "type": "string",
+            "default": "http://localhost:8880",
+            "description": "llm-proxy base URL",
+            "x-gha-type": "string",
+            "x-gha-required": false
+          }
+        },
+        "required": [
+          "users",
+          "spawn_rate",
+          "run_time"
+        ],
+        "x-workflow-name": "Load test \u2014 llm-proxy",
+        "x-workflow-path": ".github/workflows/load-test.yml",
+        "x-input-order": [
+          "users",
+          "spawn_rate",
+          "run_time",
+          "proxy_url"
+        ]
+      }
+    },
+    "mcp-smoke-pvcargo": {
+      "name": "MCP Smoke \u2014 pv-cargo",
+      "path": ".github/workflows/mcp-smoke-pvcargo.yml",
+      "has_dispatch": true,
+      "declared_inputs": [
+        "no_tool_call",
+        "skip_drift"
+      ],
+      "input_count": 2,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/mcp-smoke-pvcargo.schema.json",
+        "title": "MCP Smoke \u2014 pv-cargo",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/mcp-smoke-pvcargo.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "no_tool_call": {
+            "type": "string",
+            "enum": [
+              "false",
+              "true"
+            ],
+            "default": "false",
+            "description": "Skip remote-run tool_call check (port+health only)",
+            "x-gha-type": "choice",
+            "x-gha-required": false
+          },
+          "skip_drift": {
+            "type": "string",
+            "enum": [
+              "false",
+              "true"
+            ],
+            "default": "false",
+            "description": "Skip unit-drift-check (smoke only)",
+            "x-gha-type": "choice",
+            "x-gha-required": false
+          }
+        },
+        "required": [],
+        "x-workflow-name": "MCP Smoke \u2014 pv-cargo",
+        "x-workflow-path": ".github/workflows/mcp-smoke-pvcargo.yml",
+        "x-input-order": [
+          "no_tool_call",
+          "skip_drift"
+        ]
+      }
+    },
+    "nebula-cert": {
+      "name": "Nebula cert \u2014 sign sandbox node",
+      "path": ".github/workflows/nebula-cert.yml",
+      "has_dispatch": true,
+      "declared_inputs": [
+        "duration",
+        "groups",
+        "nebula_ip",
+        "sandbox_id"
+      ],
+      "input_count": 4,
+      "undeclared_refs": [],
+      "findings": [
+        {
+          "severity": "warn",
+          "kind": "required_without_default",
+          "input": "sandbox_id",
+          "message": "`sandbox_id` is required:true but has no default \u2014 dispatcher UI must require user input."
+        }
+      ],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/nebula-cert.schema.json",
+        "title": "Nebula cert \u2014 sign sandbox node",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/nebula-cert.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "sandbox_id": {
+            "type": "string",
+            "description": "Sandbox identifier (e.g. sbx-042, pv-cargo)",
+            "x-gha-type": "string",
+            "x-gha-required": true
+          },
+          "nebula_ip": {
+            "type": "string",
+            "default": "10.42.0.50/24",
+            "description": "Nebula overlay IP to assign (e.g. 10.42.0.50/24)",
+            "x-gha-type": "string",
+            "x-gha-required": true
+          },
+          "groups": {
+            "type": "string",
+            "default": "sandbox",
+            "description": "Comma-separated Nebula groups",
+            "x-gha-type": "string",
+            "x-gha-required": false
+          },
+          "duration": {
+            "type": "string",
+            "default": "24h",
+            "description": "Certificate validity duration",
+            "x-gha-type": "string",
+            "x-gha-required": false
+          }
+        },
+        "required": [
+          "sandbox_id",
+          "nebula_ip"
+        ],
+        "x-workflow-name": "Nebula cert \u2014 sign sandbox node",
+        "x-workflow-path": ".github/workflows/nebula-cert.yml",
+        "x-input-order": [
+          "sandbox_id",
+          "nebula_ip",
+          "groups",
+          "duration"
+        ]
+      }
+    },
+    "otel-bringup": {
+      "name": "OTEL Bring-up (Track-2)",
+      "path": ".github/workflows/otel-bringup.yml",
+      "has_dispatch": false,
+      "declared_inputs": [],
+      "input_count": 0,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": true,
+      "schema": null
+    },
+    "plugins-validate": {
+      "name": "plugins-validate",
+      "path": ".github/workflows/plugins-validate.yml",
+      "has_dispatch": false,
+      "declared_inputs": [],
+      "input_count": 0,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": null
+    },
+    "pplx-monitor": {
+      "name": "pplx-monitor",
+      "path": ".github/workflows/pplx-monitor.yml",
+      "has_dispatch": true,
+      "declared_inputs": [
+        "dry_run",
+        "skip_if_recent",
+        "window_days"
+      ],
+      "input_count": 3,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/pplx-monitor.schema.json",
+        "title": "pplx-monitor",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/pplx-monitor.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "window_days": {
+            "type": "string",
+            "default": "7",
+            "description": "Lookback window in days",
+            "x-gha-type": "string",
+            "x-gha-required": false
+          },
+          "dry_run": {
+            "type": "boolean",
+            "default": false,
+            "description": "Build artifacts but skip Resend + beacon tag",
+            "x-gha-type": "boolean",
+            "x-gha-required": false
+          },
+          "skip_if_recent": {
+            "type": "boolean",
+            "default": false,
+            "description": "Abort if another runner just emitted a digest",
+            "x-gha-type": "boolean",
+            "x-gha-required": false
+          }
+        },
+        "required": [],
+        "x-workflow-name": "pplx-monitor",
+        "x-workflow-path": ".github/workflows/pplx-monitor.yml",
+        "x-input-order": [
+          "window_days",
+          "dry_run",
+          "skip_if_recent"
+        ]
+      }
+    },
+    "pplx-rest-mcp-ci": {
+      "name": "pplx-rest-mcp CI",
+      "path": ".github/workflows/pplx-rest-mcp-ci.yml",
+      "has_dispatch": false,
+      "declared_inputs": [],
+      "input_count": 0,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": null
+    },
+    "pplx-unified-ci": {
+      "name": "pplx_unified CI",
+      "path": ".github/workflows/pplx-unified-ci.yml",
+      "has_dispatch": false,
+      "declared_inputs": [],
+      "input_count": 0,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": null
+    },
+    "probe-3085-init": {
+      "name": "Probe :3085 MCP init (follow redirects)",
+      "path": ".github/workflows/probe-3085-init.yml",
+      "has_dispatch": true,
+      "declared_inputs": [],
+      "input_count": 0,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/probe-3085-init.schema.json",
+        "title": "Probe :3085 MCP init (follow redirects)",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/probe-3085-init.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "x-workflow-name": "Probe :3085 MCP init (follow redirects)",
+        "x-workflow-path": ".github/workflows/probe-3085-init.yml",
+        "x-input-order": []
+      }
+    },
+    "probe-3085": {
+      "name": "Probe :3085 MCP server",
+      "path": ".github/workflows/probe-3085.yml",
+      "has_dispatch": true,
+      "declared_inputs": [],
+      "input_count": 0,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/probe-3085.schema.json",
+        "title": "Probe :3085 MCP server",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/probe-3085.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "x-workflow-name": "Probe :3085 MCP server",
+        "x-workflow-path": ".github/workflows/probe-3085.yml",
+        "x-input-order": []
+      }
+    },
+    "probe-pv-cargo": {
+      "name": "Probe pv-cargo LLM proxy",
+      "path": ".github/workflows/probe-pv-cargo.yml",
+      "has_dispatch": true,
+      "declared_inputs": [],
+      "input_count": 0,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/probe-pv-cargo.schema.json",
+        "title": "Probe pv-cargo LLM proxy",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/probe-pv-cargo.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "x-workflow-name": "Probe pv-cargo LLM proxy",
+        "x-workflow-path": ".github/workflows/probe-pv-cargo.yml",
+        "x-input-order": []
+      }
+    },
+    "probe-stdio": {
+      "name": "Probe pplx-tools stdio mode",
+      "path": ".github/workflows/probe-stdio.yml",
+      "has_dispatch": true,
+      "declared_inputs": [],
+      "input_count": 0,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/probe-stdio.schema.json",
+        "title": "Probe pplx-tools stdio mode",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/probe-stdio.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "x-workflow-name": "Probe pplx-tools stdio mode",
+        "x-workflow-path": ".github/workflows/probe-stdio.yml",
+        "x-input-order": []
+      }
+    },
+    "recover-agentgateway": {
+      "name": "Break-glass recover agentgateway",
+      "path": ".github/workflows/recover-agentgateway.yml",
+      "has_dispatch": true,
+      "declared_inputs": [
+        "probe_after",
+        "reason"
+      ],
+      "input_count": 2,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/recover-agentgateway.schema.json",
+        "title": "Break-glass recover agentgateway",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/recover-agentgateway.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "reason": {
+            "type": "string",
+            "default": "manual break-glass",
+            "description": "Recovery reason / context",
+            "x-gha-type": "string",
+            "x-gha-required": false
+          },
+          "probe_after": {
+            "type": "string",
+            "default": "true",
+            "description": "Run probes after recovery",
+            "x-gha-type": "string",
+            "x-gha-required": false
+          }
+        },
+        "required": [],
+        "x-workflow-name": "Break-glass recover agentgateway",
+        "x-workflow-path": ".github/workflows/recover-agentgateway.yml",
+        "x-input-order": [
+          "reason",
+          "probe_after"
+        ]
+      }
+    },
+    "release-on-tag": {
+      "name": "release-on-tag",
+      "path": ".github/workflows/release-on-tag.yml",
+      "has_dispatch": false,
+      "declared_inputs": [],
+      "input_count": 0,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": null
+    },
+    "release-tag-preflight": {
+      "name": "release-tag-preflight",
+      "path": ".github/workflows/release-tag-preflight.yml",
+      "has_dispatch": false,
+      "declared_inputs": [],
+      "input_count": 0,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": null
+    },
+    "release": {
+      "name": "Release",
+      "path": ".github/workflows/release.yml",
+      "has_dispatch": true,
+      "declared_inputs": [
+        "package",
+        "version"
+      ],
+      "input_count": 2,
+      "undeclared_refs": [],
+      "findings": [
+        {
+          "severity": "warn",
+          "kind": "required_without_default",
+          "input": "package",
+          "message": "`package` is required:true but has no default \u2014 dispatcher UI must require user input."
+        },
+        {
+          "severity": "warn",
+          "kind": "required_without_default",
+          "input": "version",
+          "message": "`version` is required:true but has no default \u2014 dispatcher UI must require user input."
+        }
+      ],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/release.schema.json",
+        "title": "Release",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/release.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "package": {
+            "type": "string",
+            "description": "Package name (e.g. fs_bridge, pplx-lab-bundle)",
+            "x-gha-type": "string",
+            "x-gha-required": true
+          },
+          "version": {
+            "type": "string",
+            "description": "SemVer X.Y.Z to release",
+            "x-gha-type": "string",
+            "x-gha-required": true
+          }
+        },
+        "required": [
+          "package",
+          "version"
+        ],
+        "x-workflow-name": "Release",
+        "x-workflow-path": ".github/workflows/release.yml",
+        "x-input-order": [
+          "package",
+          "version"
+        ]
+      }
+    },
+    "runner-gitconfig-cleanup": {
+      "name": "Runner gitconfig cleanup",
+      "path": ".github/workflows/runner-gitconfig-cleanup.yml",
+      "has_dispatch": false,
+      "declared_inputs": [],
+      "input_count": 0,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": null
+    },
+    "sandbox-provision": {
+      "name": "Sandbox SSH Provision",
+      "path": ".github/workflows/sandbox-provision.yml",
+      "has_dispatch": true,
+      "declared_inputs": [
+        "sandbox_id"
+      ],
+      "input_count": 1,
+      "undeclared_refs": [],
+      "findings": [
+        {
+          "severity": "warn",
+          "kind": "required_without_default",
+          "input": "sandbox_id",
+          "message": "`sandbox_id` is required:true but has no default \u2014 dispatcher UI must require user input."
+        }
+      ],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/sandbox-provision.schema.json",
+        "title": "Sandbox SSH Provision",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/sandbox-provision.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "sandbox_id": {
+            "type": "string",
+            "description": "E2B sandbox ID to provision",
+            "x-gha-type": "string",
+            "x-gha-required": true
+          }
+        },
+        "required": [
+          "sandbox_id"
+        ],
+        "x-workflow-name": "Sandbox SSH Provision",
+        "x-workflow-path": ".github/workflows/sandbox-provision.yml",
+        "x-input-order": [
+          "sandbox_id"
+        ]
+      }
+    },
+    "skill-manifest-validate": {
+      "name": "Skill Manifest Validate (ADR-096)",
+      "path": ".github/workflows/skill-manifest-validate.yml",
+      "has_dispatch": false,
+      "declared_inputs": [],
+      "input_count": 0,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": null
+    },
+    "smoke-pplx-tools": {
+      "name": "Smoke pplx-tools MCP target",
+      "path": ".github/workflows/smoke-pplx-tools.yml",
+      "has_dispatch": true,
+      "declared_inputs": [],
+      "input_count": 0,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/smoke-pplx-tools.schema.json",
+        "title": "Smoke pplx-tools MCP target",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/smoke-pplx-tools.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "x-workflow-name": "Smoke pplx-tools MCP target",
+        "x-workflow-path": ".github/workflows/smoke-pplx-tools.yml",
+        "x-input-order": []
+      }
+    },
+    "spa-corpus-pipeline": {
+      "name": "SPA Corpus \u2014 full pipeline",
+      "path": ".github/workflows/spa-corpus-pipeline.yml",
+      "has_dispatch": true,
+      "declared_inputs": [
+        "bundle_source",
+        "hf_repo",
+        "skip_embed",
+        "version"
+      ],
+      "input_count": 4,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/spa-corpus-pipeline.schema.json",
+        "title": "SPA Corpus \u2014 full pipeline",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/spa-corpus-pipeline.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "bundle_source": {
+            "type": "string",
+            "enum": [
+              "fetch",
+              "local"
+            ],
+            "default": "fetch",
+            "description": "Bundle source: fetch (live from perplexity.ai) | local (use research/extracted/comet/latest)",
+            "x-gha-type": "choice",
+            "x-gha-required": false
+          },
+          "version": {
+            "type": "string",
+            "default": "unknown",
+            "description": "Fallback version tag if meta absent",
+            "x-gha-type": "string",
+            "x-gha-required": false
+          },
+          "hf_repo": {
+            "type": "string",
+            "default": "ormwish/pplx-lab",
+            "description": "HF dataset repo",
+            "x-gha-type": "string",
+            "x-gha-required": false
+          },
+          "skip_embed": {
+            "type": "boolean",
+            "default": false,
+            "description": "Skip embedding stage (faster, no vectors)",
+            "x-gha-type": "boolean",
+            "x-gha-required": false
+          }
+        },
+        "required": [],
+        "x-workflow-name": "SPA Corpus \u2014 full pipeline",
+        "x-workflow-path": ".github/workflows/spa-corpus-pipeline.yml",
+        "x-input-order": [
+          "bundle_source",
+          "version",
+          "hf_repo",
+          "skip_embed"
+        ]
+      }
+    },
+    "spa-corpus-upload": {
+      "name": "SPA Corpus \u2014 upload to HF",
+      "path": ".github/workflows/spa-corpus-upload.yml",
+      "has_dispatch": true,
+      "declared_inputs": [
+        "hf_repo",
+        "version"
+      ],
+      "input_count": 2,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/spa-corpus-upload.schema.json",
+        "title": "SPA Corpus \u2014 upload to HF",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/spa-corpus-upload.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "version": {
+            "type": "string",
+            "default": "bb36baf",
+            "description": "Fallback version if meta tag absent",
+            "x-gha-type": "string",
+            "x-gha-required": false
+          },
+          "hf_repo": {
+            "type": "string",
+            "default": "ormwish/pplx-lab",
+            "description": "HF dataset repo",
+            "x-gha-type": "string",
+            "x-gha-required": false
+          }
+        },
+        "required": [],
+        "x-workflow-name": "SPA Corpus \u2014 upload to HF",
+        "x-workflow-path": ".github/workflows/spa-corpus-upload.yml",
+        "x-input-order": [
+          "version",
+          "hf_repo"
+        ]
+      }
+    },
+    "spec-codegen": {
+      "name": "Spec Codegen Pipeline",
+      "path": ".github/workflows/spec-codegen.yml",
+      "has_dispatch": true,
+      "declared_inputs": [
+        "force_crx_update"
+      ],
+      "input_count": 1,
+      "undeclared_refs": [],
+      "findings": [
+        {
+          "severity": "info",
+          "kind": "boolean_default_quoted",
+          "input": "force_crx_update",
+          "message": "`force_crx_update` boolean default is quoted ('false'); GHA coerces but prefer unquoted true/false."
+        }
+      ],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/spec-codegen.schema.json",
+        "title": "Spec Codegen Pipeline",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/spec-codegen.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "force_crx_update": {
+            "type": "boolean",
+            "default": false,
+            "description": "Force CRX re-download even if version unchanged",
+            "x-gha-type": "boolean",
+            "x-gha-required": false
+          }
+        },
+        "required": [],
+        "x-workflow-name": "Spec Codegen Pipeline",
+        "x-workflow-path": ".github/workflows/spec-codegen.yml",
+        "x-input-order": [
+          "force_crx_update"
+        ]
+      }
+    },
+    "spec-coherence": {
+      "name": "spec-coherence",
+      "path": ".github/workflows/spec-coherence.yml",
+      "has_dispatch": false,
+      "declared_inputs": [],
+      "input_count": 0,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": null
+    },
+    "ssh-lint": {
+      "name": "SSH Scripts Lint",
+      "path": ".github/workflows/ssh-lint.yml",
+      "has_dispatch": false,
+      "declared_inputs": [],
+      "input_count": 0,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": null
+    },
+    "tailscale-acl": {
+      "name": "Tailscale ACL",
+      "path": ".github/workflows/tailscale-acl.yml",
+      "has_dispatch": true,
+      "declared_inputs": [],
+      "input_count": 0,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/tailscale-acl.schema.json",
+        "title": "Tailscale ACL",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/tailscale-acl.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "x-workflow-name": "Tailscale ACL",
+        "x-workflow-path": ".github/workflows/tailscale-acl.yml",
+        "x-input-order": []
+      }
+    },
+    "test-collect": {
+      "name": "Test Collection",
+      "path": ".github/workflows/test-collect.yml",
+      "has_dispatch": false,
+      "declared_inputs": [],
+      "input_count": 0,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": null
+    },
+    "test-gha-log-extractor": {
+      "name": "Test gha-log-extractor",
+      "path": ".github/workflows/test-gha-log-extractor.yml",
+      "has_dispatch": false,
+      "declared_inputs": [],
+      "input_count": 0,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": null
+    },
+    "test-pplx-gha": {
+      "name": "pplx_gha / tests",
+      "path": ".github/workflows/test-pplx-gha.yml",
+      "has_dispatch": false,
+      "declared_inputs": [],
+      "input_count": 0,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": null
+    },
+    "test-selfhosted": {
+      "name": "Test pv-cargo runner",
+      "path": ".github/workflows/test-selfhosted.yml",
+      "has_dispatch": false,
+      "declared_inputs": [],
+      "input_count": 0,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": true,
+      "schema": null
+    },
+    "test": {
+      "name": "Tests",
+      "path": ".github/workflows/test.yml",
+      "has_dispatch": false,
+      "declared_inputs": [],
+      "input_count": 0,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": null
+    },
+    "validate-config": {
+      "name": "Validate agentgateway config (proposed)",
+      "path": ".github/workflows/validate-config.yml",
+      "has_dispatch": true,
+      "declared_inputs": [
+        "branch"
+      ],
+      "input_count": 1,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/validate-config.schema.json",
+        "title": "Validate agentgateway config (proposed)",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/validate-config.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "branch": {
+            "type": "string",
+            "default": "feat/expose-pplx-tools-mcp",
+            "x-gha-type": "string",
+            "x-gha-required": false
+          }
+        },
+        "required": [],
+        "x-workflow-name": "Validate agentgateway config (proposed)",
+        "x-workflow-path": ".github/workflows/validate-config.yml",
+        "x-input-order": [
+          "branch"
+        ]
+      }
+    },
+    "wave-n-supervisor-tests": {
+      "name": "wave-n-supervisor / tests",
+      "path": ".github/workflows/wave-n-supervisor-tests.yml",
+      "has_dispatch": false,
+      "declared_inputs": [],
+      "input_count": 0,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": null
+    },
+    "workflows-mcp-handoff": {
+      "name": "workflows-mcp-handoff",
+      "path": ".github/workflows/workflows-mcp-handoff.yml",
+      "has_dispatch": true,
+      "declared_inputs": [
+        "hostname",
+        "run_minutes",
+        "skip_bootstrap",
+        "skip_register",
+        "tunnel_name",
+        "zone"
+      ],
+      "input_count": 6,
+      "undeclared_refs": [],
+      "findings": [],
+      "partial_parse": false,
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "pplx-lab/workflows/workflows-mcp-handoff.schema.json",
+        "title": "workflows-mcp-handoff",
+        "description": "Inputs for workflow_dispatch of `.github/workflows/workflows-mcp-handoff.yml` (pv-udpv/pplx-lab).",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "zone": {
+            "type": "string",
+            "default": "zbst.tech",
+            "description": "Apex zone",
+            "x-gha-type": "string",
+            "x-gha-required": false
+          },
+          "hostname": {
+            "type": "string",
+            "default": "workflows-mcp.zbst.tech",
+            "description": "Public hostname",
+            "x-gha-type": "string",
+            "x-gha-required": false
+          },
+          "tunnel_name": {
+            "type": "string",
+            "default": "pplx-workflows-mcp",
+            "description": "Cloudflare tunnel name",
+            "x-gha-type": "string",
+            "x-gha-required": false
+          },
+          "run_minutes": {
+            "type": "string",
+            "default": "300",
+            "description": "How long to hold the tunnel running (max ~330 on GHA free)",
+            "x-gha-type": "string",
+            "x-gha-required": false
+          },
+          "skip_bootstrap": {
+            "type": "boolean",
+            "default": false,
+            "description": "Skip bootstrap job (use existing CF_TUNNEL_TOKEN)",
+            "x-gha-type": "boolean",
+            "x-gha-required": false
+          },
+          "skip_register": {
+            "type": "boolean",
+            "default": false,
+            "description": "Skip Perplexity source registration",
+            "x-gha-type": "boolean",
+            "x-gha-required": false
+          }
+        },
+        "required": [],
+        "x-workflow-name": "workflows-mcp-handoff",
+        "x-workflow-path": ".github/workflows/workflows-mcp-handoff.yml",
+        "x-input-order": [
+          "zone",
+          "hostname",
+          "tunnel_name",
+          "run_minutes",
+          "skip_bootstrap",
+          "skip_register"
+        ]
+      }
+    }
+  }
+}

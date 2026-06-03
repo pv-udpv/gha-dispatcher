@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/kg-curator-promote.schema.json",
+  "title": "KG Curator Promote",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/kg-curator-promote.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "min_confidence": {
+      "type": "string",
+      "default": "0.80",
+      "description": "Minimum confidence threshold for promotion",
+      "x-gha-type": "string",
+      "x-gha-required": false
+    }
+  },
+  "required": [],
+  "x-workflow-name": "KG Curator Promote",
+  "x-workflow-path": ".github/workflows/kg-curator-promote.yml",
+  "x-input-order": [
+    "min_confidence"
+  ]
+}

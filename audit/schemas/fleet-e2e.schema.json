@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/fleet-e2e.schema.json",
+  "title": "Fleet E2E (ADR-048)",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/fleet-e2e.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "include_waven": {
+      "type": "string",
+      "enum": [
+        "0",
+        "1"
+      ],
+      "default": "1",
+      "description": "Include H4 (Wave-N BA smoke, ~2min)",
+      "x-gha-type": "choice",
+      "x-gha-required": false
+    },
+    "pytest_k": {
+      "type": "string",
+      "default": "",
+      "description": "pytest -k expression (empty = all hops)",
+      "x-gha-type": "string",
+      "x-gha-required": false
+    },
+    "pytest_extra": {
+      "type": "string",
+      "default": "-v -rs",
+      "description": "Extra pytest args (default: -v -rs to print skip reasons)",
+      "x-gha-type": "string",
+      "x-gha-required": false
+    },
+    "deploy_before_run": {
+      "type": "string",
+      "enum": [
+        "0",
+        "1"
+      ],
+      "default": "0",
+      "description": "Sync /home/pv/pplx-lab to this branch+SHA and restart agentgateway before the hop matrix",
+      "x-gha-type": "choice",
+      "x-gha-required": false
+    },
+    "install_node": {
+      "type": "string",
+      "enum": [
+        "0",
+        "1"
+      ],
+      "default": "1",
+      "description": "Install Node.js 22 on the runner (enables H0b @modelcontextprotocol/conformance; v22+ required for fs.globSync)",
+      "x-gha-type": "choice",
+      "x-gha-required": false
+    }
+  },
+  "required": [],
+  "x-workflow-name": "Fleet E2E (ADR-048)",
+  "x-workflow-path": ".github/workflows/fleet-e2e.yml",
+  "x-input-order": [
+    "include_waven",
+    "pytest_k",
+    "pytest_extra",
+    "deploy_before_run",
+    "install_node"
+  ]
+}

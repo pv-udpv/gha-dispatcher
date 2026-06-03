@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/embed-backfill-hf.schema.json",
+  "title": "KG Embeddings Backfill (HF Inference)",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/embed-backfill-hf.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "force": {
+      "type": "boolean",
+      "default": false,
+      "description": "Re-embed all entities (even with existing embeddings)",
+      "x-gha-type": "boolean",
+      "x-gha-required": false
+    },
+    "batch_size": {
+      "type": "string",
+      "default": "32",
+      "description": "HF Inference batch size",
+      "x-gha-type": "string",
+      "x-gha-required": false
+    }
+  },
+  "required": [],
+  "x-workflow-name": "KG Embeddings Backfill (HF Inference)",
+  "x-workflow-path": ".github/workflows/embed-backfill-hf.yml",
+  "x-input-order": [
+    "force",
+    "batch_size"
+  ]
+}

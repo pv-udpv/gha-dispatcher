@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/nebula-cert.schema.json",
+  "title": "Nebula cert \u2014 sign sandbox node",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/nebula-cert.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sandbox_id": {
+      "type": "string",
+      "description": "Sandbox identifier (e.g. sbx-042, pv-cargo)",
+      "x-gha-type": "string",
+      "x-gha-required": true
+    },
+    "nebula_ip": {
+      "type": "string",
+      "default": "10.42.0.50/24",
+      "description": "Nebula overlay IP to assign (e.g. 10.42.0.50/24)",
+      "x-gha-type": "string",
+      "x-gha-required": true
+    },
+    "groups": {
+      "type": "string",
+      "default": "sandbox",
+      "description": "Comma-separated Nebula groups",
+      "x-gha-type": "string",
+      "x-gha-required": false
+    },
+    "duration": {
+      "type": "string",
+      "default": "24h",
+      "description": "Certificate validity duration",
+      "x-gha-type": "string",
+      "x-gha-required": false
+    }
+  },
+  "required": [
+    "sandbox_id",
+    "nebula_ip"
+  ],
+  "x-workflow-name": "Nebula cert \u2014 sign sandbox node",
+  "x-workflow-path": ".github/workflows/nebula-cert.yml",
+  "x-input-order": [
+    "sandbox_id",
+    "nebula_ip",
+    "groups",
+    "duration"
+  ]
+}

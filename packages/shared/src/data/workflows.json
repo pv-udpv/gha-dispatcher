@@ -5,6 +5,86 @@
   "groups": {
     "pv-cargo": [
       {
+        "name": "Fix AGW A2A config and deploy CLI runners",
+        "path": ".github/workflows/a2a-agw-fix.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "deploy_cli_runners",
+            "description": "Deploy claude-code and codex-cli A2A nodes",
+            "type": "boolean",
+            "required": false,
+            "default": true,
+            "options": []
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "comet-drift",
+        "path": ".github/workflows/comet-drift.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "channels",
+            "description": "CRX channels to probe (comma-separated, e.g. stable,dev,canary)",
+            "type": "string",
+            "required": false,
+            "default": "stable,dev,canary",
+            "options": []
+          },
+          {
+            "name": "strict",
+            "description": "Fail the job on drift (default true)",
+            "type": "boolean",
+            "required": false,
+            "default": true,
+            "options": []
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "comet-enum-watch",
+        "path": ".github/workflows/comet-enum-watch.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "cdp_host",
+            "description": "CDP host:port (default: localhost:9222)",
+            "type": "string",
+            "required": false,
+            "default": "localhost:9222",
+            "options": []
+          },
+          {
+            "name": "force_notify",
+            "description": "Always send notification even if no drift",
+            "type": "boolean",
+            "required": false,
+            "default": false,
+            "options": []
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "comet-preflight",
+        "path": ".github/workflows/comet-preflight.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "force_notify",
+            "description": "Notify even if all checks pass",
+            "type": "boolean",
+            "required": false,
+            "default": false,
+            "options": []
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
         "name": "Deploy pplx-rest-mcp to pv-cargo",
         "path": ".github/workflows/deploy-pplx-rest-mcp.yml",
         "state": "active",
@@ -22,7 +102,7 @@
             "description": "Reload AgentGateway after MCP config sync",
             "type": "boolean",
             "required": false,
-            "default": "True",
+            "default": true,
             "options": []
           }
         ],
@@ -38,10 +118,17 @@
             "description": "Deploy Wave-403 pydantic-ai supervisor to pv-cargo",
             "type": "boolean",
             "required": false,
-            "default": "False",
+            "default": false,
             "options": []
           }
         ],
+        "has_dispatch": true
+      },
+      {
+        "name": "Discover pv-cargo",
+        "path": ".github/workflows/discover-pv-cargo.yml",
+        "state": "active",
+        "dispatch_inputs": [],
         "has_dispatch": true
       },
       {
@@ -54,7 +141,7 @@
             "description": "Task to run",
             "type": "choice",
             "required": true,
-            "default": "",
+            "default": null,
             "options": [
               "smoke-test",
               "lint",
@@ -68,7 +155,7 @@
             "description": "Experiment ID (for run-experiment/collect-evidence)",
             "type": "string",
             "required": false,
-            "default": "",
+            "default": null,
             "options": []
           },
           {
@@ -76,7 +163,7 @@
             "description": "Thread context_uuid (for run-experiment)",
             "type": "string",
             "required": false,
-            "default": "",
+            "default": null,
             "options": []
           },
           {
@@ -84,26 +171,17 @@
             "description": "Extra arguments passed to the task",
             "type": "string",
             "required": false,
-            "default": "",
+            "default": null,
             "options": []
           }
         ],
         "has_dispatch": true
       },
       {
-        "name": "Fix AGW A2A config and deploy CLI runners",
-        "path": ".github/workflows/a2a-agw-fix.yml",
+        "name": "Inspect pv-cargo MCP topology",
+        "path": ".github/workflows/inspect-pv-cargo.yml",
         "state": "active",
-        "dispatch_inputs": [
-          {
-            "name": "deploy_cli_runners",
-            "description": "Deploy claude-code and codex-cli A2A nodes",
-            "type": "boolean",
-            "required": false,
-            "default": "True",
-            "options": []
-          }
-        ],
+        "dispatch_inputs": [],
         "has_dispatch": true
       },
       {
@@ -137,20 +215,6 @@
         "has_dispatch": true
       },
       {
-        "name": "Discover pv-cargo",
-        "path": ".github/workflows/discover-pv-cargo.yml",
-        "state": "active",
-        "dispatch_inputs": [],
-        "has_dispatch": false
-      },
-      {
-        "name": "Inspect pv-cargo MCP topology",
-        "path": ".github/workflows/inspect-pv-cargo.yml",
-        "state": "active",
-        "dispatch_inputs": [],
-        "has_dispatch": false
-      },
-      {
         "name": "Probe pv-cargo LLM proxy",
         "path": ".github/workflows/probe-pv-cargo.yml",
         "state": "active",
@@ -169,7 +233,7 @@
         "path": ".github/workflows/tailscale-acl.yml",
         "state": "active",
         "dispatch_inputs": [],
-        "has_dispatch": false
+        "has_dispatch": true
       },
       {
         "name": "Test pv-cargo runner",
@@ -190,7 +254,7 @@
             "description": "SSH public key to authorize on pv-cargo for user pv",
             "type": "string",
             "required": true,
-            "default": "",
+            "default": null,
             "options": []
           }
         ],
@@ -206,7 +270,7 @@
             "description": "Sandbox identifier (e.g. sbx-042, pv-cargo)",
             "type": "string",
             "required": true,
-            "default": "",
+            "default": null,
             "options": []
           },
           {
@@ -246,7 +310,7 @@
             "description": "E2B sandbox ID to provision",
             "type": "string",
             "required": true,
-            "default": "",
+            "default": null,
             "options": []
           }
         ],
@@ -254,6 +318,13 @@
       }
     ],
     "web": [
+      {
+        "name": "ADR-055 export check",
+        "path": ".github/workflows/adr-055-export.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
       {
         "name": "ADR-055 KG Sync (0_ protocol)",
         "path": ".github/workflows/adr-055-kg-sync.yml",
@@ -285,6 +356,13 @@
         "has_dispatch": true
       },
       {
+        "name": "ADR-055 0_ lint",
+        "path": ".github/workflows/adr-055-lint.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
         "name": "Agent-Fix Chain",
         "path": ".github/workflows/agent-fix.yml",
         "state": "active",
@@ -294,7 +372,7 @@
             "description": "GitHub issue number to fix (body becomes chain goal)",
             "type": "string",
             "required": true,
-            "default": "",
+            "default": null,
             "options": []
           },
           {
@@ -332,16 +410,7 @@
         "name": "AGW Bootstrap (ZBS-67/69)",
         "path": ".github/workflows/agw-bootstrap.yml",
         "state": "active",
-        "dispatch_inputs": [
-          {
-            "name": "sandbox_pubkey",
-            "description": "Sandbox SSH public key to authorize",
-            "type": "string",
-            "required": false,
-            "default": "",
-            "options": []
-          }
-        ],
+        "dispatch_inputs": [],
         "has_dispatch": true
       },
       {
@@ -372,24 +441,37 @@
         "has_dispatch": true
       },
       {
-        "name": "Break-glass recover agentgateway",
-        "path": ".github/workflows/recover-agentgateway.yml",
+        "name": "AGW MCP backend diagnostics",
+        "path": ".github/workflows/agw-mcp-diag.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "AGW Smoke (ZBS-98)",
+        "path": ".github/workflows/agw-smoke.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "architecture-explorer",
+        "path": ".github/workflows/architecture-explorer.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "Control Tower \u2014 Automerge",
+        "path": ".github/workflows/automerge.yml",
         "state": "active",
         "dispatch_inputs": [
           {
-            "name": "reason",
-            "description": "Recovery reason / context",
-            "type": "string",
+            "name": "dry_run",
+            "description": "Dry run (log only, no merge)",
+            "type": "boolean",
             "required": false,
-            "default": "manual break-glass",
-            "options": []
-          },
-          {
-            "name": "probe_after",
-            "description": "Run probes after recovery",
-            "type": "string",
-            "required": false,
-            "default": "true",
+            "default": false,
             "options": []
           }
         ],
@@ -413,11 +495,25 @@
             "description": "Upsert all nodes (ignore --since)",
             "type": "boolean",
             "required": false,
-            "default": "False",
+            "default": false,
             "options": []
           }
         ],
         "has_dispatch": true
+      },
+      {
+        "name": "Check agentgateway version + http target docs",
+        "path": ".github/workflows/check-agw.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": true
+      },
+      {
+        "name": "claude-plugin-to-fastmcp",
+        "path": ".github/workflows/claude-plugin-to-fastmcp.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
       },
       {
         "name": "comet-pipeline",
@@ -429,7 +525,7 @@
             "description": "Force a specific Comet version (skips ingest no-op check)",
             "type": "string",
             "required": false,
-            "default": "",
+            "default": null,
             "options": []
           },
           {
@@ -437,27 +533,25 @@
             "description": "Reuse existing api_surface.json (skip CRX ingest)",
             "type": "boolean",
             "required": false,
-            "default": "False",
+            "default": false,
             "options": []
           }
         ],
         "has_dispatch": true
       },
       {
-        "name": "Control Tower \u2014 Automerge",
-        "path": ".github/workflows/automerge.yml",
+        "name": "Copilot Setup",
+        "path": ".github/workflows/copilot-setup-steps.yml",
         "state": "active",
-        "dispatch_inputs": [
-          {
-            "name": "dry_run",
-            "description": "Dry run (log only, no merge)",
-            "type": "boolean",
-            "required": false,
-            "default": "False",
-            "options": []
-          }
-        ],
-        "has_dispatch": true
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "D2 Render \u2014 ADR-054",
+        "path": ".github/workflows/d2-render.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
       },
       {
         "name": "Deploy plugin-mcp to Supabase",
@@ -469,7 +563,7 @@
             "description": "Force re-deploy",
             "type": "boolean",
             "required": false,
-            "default": "True",
+            "default": true,
             "options": []
           }
         ],
@@ -485,7 +579,54 @@
             "description": "Skip the /healthz version-diff gate (force re-deploy)",
             "type": "boolean",
             "required": false,
-            "default": "False",
+            "default": false,
+            "options": []
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "diff-smoke-v3 nightly",
+        "path": ".github/workflows/diff-smoke-v3-nightly.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "KG Embeddings Backfill (HF Inference)",
+        "path": ".github/workflows/embed-backfill-hf.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "force",
+            "description": "Re-embed all entities (even with existing embeddings)",
+            "type": "boolean",
+            "required": false,
+            "default": false,
+            "options": []
+          },
+          {
+            "name": "batch_size",
+            "description": "HF Inference batch size",
+            "type": "string",
+            "required": false,
+            "default": "32",
+            "options": []
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "KG Embeddings Backfill",
+        "path": ".github/workflows/embed-backfill.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "force",
+            "description": "Re-embed all entities (even with existing embeddings)",
+            "type": "boolean",
+            "required": false,
+            "default": false,
             "options": []
           }
         ],
@@ -549,6 +690,13 @@
         "has_dispatch": true
       },
       {
+        "name": "Gitleaks Repo Scan",
+        "path": ".github/workflows/gitleaks.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
         "name": "hf-artifacts",
         "path": ".github/workflows/hf-artifacts.yml",
         "state": "active",
@@ -558,26 +706,17 @@
             "description": "Force re-download even if cache key matches",
             "type": "boolean",
             "required": false,
-            "default": "False",
+            "default": false,
             "options": []
           }
         ],
         "has_dispatch": true
       },
       {
-        "name": "KG Curator Promote",
-        "path": ".github/workflows/kg-curator-promote.yml",
+        "name": "Inspect gateway-pplx-tools app.py",
+        "path": ".github/workflows/inspect-mcp-app.yml",
         "state": "active",
-        "dispatch_inputs": [
-          {
-            "name": "min_confidence",
-            "description": "Minimum confidence threshold for promotion",
-            "type": "string",
-            "required": false,
-            "default": "0.80",
-            "options": []
-          }
-        ],
+        "dispatch_inputs": [],
         "has_dispatch": true
       },
       {
@@ -597,40 +736,16 @@
         "has_dispatch": true
       },
       {
-        "name": "KG Embeddings Backfill",
-        "path": ".github/workflows/embed-backfill.yml",
+        "name": "KG Curator Promote",
+        "path": ".github/workflows/kg-curator-promote.yml",
         "state": "active",
         "dispatch_inputs": [
           {
-            "name": "force",
-            "description": "Re-embed all entities (even with existing embeddings)",
-            "type": "boolean",
-            "required": false,
-            "default": "False",
-            "options": []
-          }
-        ],
-        "has_dispatch": true
-      },
-      {
-        "name": "KG Embeddings Backfill (HF Inference)",
-        "path": ".github/workflows/embed-backfill-hf.yml",
-        "state": "active",
-        "dispatch_inputs": [
-          {
-            "name": "force",
-            "description": "Re-embed all entities (even with existing embeddings)",
-            "type": "boolean",
-            "required": false,
-            "default": "False",
-            "options": []
-          },
-          {
-            "name": "batch_size",
-            "description": "HF Inference batch size",
+            "name": "min_confidence",
+            "description": "Minimum confidence threshold for promotion",
             "type": "string",
             "required": false,
-            "default": "32",
+            "default": "0.80",
             "options": []
           }
         ],
@@ -693,6 +808,20 @@
         "has_dispatch": true
       },
       {
+        "name": "OTEL Bring-up (Track-2)",
+        "path": ".github/workflows/otel-bringup.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "plugins-validate",
+        "path": ".github/workflows/plugins-validate.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
         "name": "pplx-monitor",
         "path": ".github/workflows/pplx-monitor.yml",
         "state": "active",
@@ -710,7 +839,7 @@
             "description": "Build artifacts but skip Resend + beacon tag",
             "type": "boolean",
             "required": false,
-            "default": "False",
+            "default": false,
             "options": []
           },
           {
@@ -718,11 +847,84 @@
             "description": "Abort if another runner just emitted a digest",
             "type": "boolean",
             "required": false,
-            "default": "False",
+            "default": false,
             "options": []
           }
         ],
         "has_dispatch": true
+      },
+      {
+        "name": "pplx-rest-mcp CI",
+        "path": ".github/workflows/pplx-rest-mcp-ci.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "pplx_unified CI",
+        "path": ".github/workflows/pplx-unified-ci.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "Probe :3085 MCP init (follow redirects)",
+        "path": ".github/workflows/probe-3085-init.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": true
+      },
+      {
+        "name": "Probe :3085 MCP server",
+        "path": ".github/workflows/probe-3085.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": true
+      },
+      {
+        "name": "Probe pplx-tools stdio mode",
+        "path": ".github/workflows/probe-stdio.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": true
+      },
+      {
+        "name": "Break-glass recover agentgateway",
+        "path": ".github/workflows/recover-agentgateway.yml",
+        "state": "active",
+        "dispatch_inputs": [
+          {
+            "name": "reason",
+            "description": "Recovery reason / context",
+            "type": "string",
+            "required": false,
+            "default": "manual break-glass",
+            "options": []
+          },
+          {
+            "name": "probe_after",
+            "description": "Run probes after recovery",
+            "type": "string",
+            "required": false,
+            "default": "true",
+            "options": []
+          }
+        ],
+        "has_dispatch": true
+      },
+      {
+        "name": "release-on-tag",
+        "path": ".github/workflows/release-on-tag.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "release-tag-preflight",
+        "path": ".github/workflows/release-tag-preflight.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
       },
       {
         "name": "Release",
@@ -734,7 +936,7 @@
             "description": "Package name (e.g. fs_bridge, pplx-lab-bundle)",
             "type": "string",
             "required": true,
-            "default": "",
+            "default": null,
             "options": []
           },
           {
@@ -742,10 +944,24 @@
             "description": "SemVer X.Y.Z to release",
             "type": "string",
             "required": true,
-            "default": "",
+            "default": null,
             "options": []
           }
         ],
+        "has_dispatch": true
+      },
+      {
+        "name": "Skill Manifest Validate (ADR-096)",
+        "path": ".github/workflows/skill-manifest-validate.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "Smoke pplx-tools MCP target",
+        "path": ".github/workflows/smoke-pplx-tools.yml",
+        "state": "active",
+        "dispatch_inputs": [],
         "has_dispatch": true
       },
       {
@@ -785,7 +1001,7 @@
             "description": "Skip embedding stage (faster, no vectors)",
             "type": "boolean",
             "required": false,
-            "default": "False",
+            "default": false,
             "options": []
           }
         ],
@@ -832,6 +1048,48 @@
         "has_dispatch": true
       },
       {
+        "name": "spec-coherence",
+        "path": ".github/workflows/spec-coherence.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "SSH Scripts Lint",
+        "path": ".github/workflows/ssh-lint.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "Test Collection",
+        "path": ".github/workflows/test-collect.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "Test gha-log-extractor",
+        "path": ".github/workflows/test-gha-log-extractor.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "pplx_gha / tests",
+        "path": ".github/workflows/test-pplx-gha.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
+        "name": "Tests",
+        "path": ".github/workflows/test.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
+      },
+      {
         "name": "Validate agentgateway config (proposed)",
         "path": ".github/workflows/validate-config.yml",
         "state": "active",
@@ -846,6 +1104,13 @@
           }
         ],
         "has_dispatch": true
+      },
+      {
+        "name": "wave-n-supervisor / tests",
+        "path": ".github/workflows/wave-n-supervisor-tests.yml",
+        "state": "active",
+        "dispatch_inputs": [],
+        "has_dispatch": false
       },
       {
         "name": "workflows-mcp-handoff",
@@ -889,7 +1154,7 @@
             "description": "Skip bootstrap job (use existing CF_TUNNEL_TOKEN)",
             "type": "boolean",
             "required": false,
-            "default": "False",
+            "default": false,
             "options": []
           },
           {
@@ -897,221 +1162,11 @@
             "description": "Skip Perplexity source registration",
             "type": "boolean",
             "required": false,
-            "default": "False",
+            "default": false,
             "options": []
           }
         ],
         "has_dispatch": true
-      },
-      {
-        "name": "ADR-055 0_ lint",
-        "path": ".github/workflows/adr-055-lint.yml",
-        "state": "active",
-        "dispatch_inputs": [],
-        "has_dispatch": false
-      },
-      {
-        "name": "ADR-055 export check",
-        "path": ".github/workflows/adr-055-export.yml",
-        "state": "active",
-        "dispatch_inputs": [],
-        "has_dispatch": false
-      },
-      {
-        "name": "AGW MCP backend diagnostics",
-        "path": ".github/workflows/agw-mcp-diag.yml",
-        "state": "active",
-        "dispatch_inputs": [],
-        "has_dispatch": false
-      },
-      {
-        "name": "AGW Smoke (ZBS-98)",
-        "path": ".github/workflows/agw-smoke.yml",
-        "state": "active",
-        "dispatch_inputs": [],
-        "has_dispatch": true
-      },
-      {
-        "name": "architecture-explorer",
-        "path": ".github/workflows/architecture-explorer.yml",
-        "state": "active",
-        "dispatch_inputs": [],
-        "has_dispatch": false
-      },
-      {
-        "name": "Check agentgateway version + http target docs",
-        "path": ".github/workflows/check-agw.yml",
-        "state": "active",
-        "dispatch_inputs": [],
-        "has_dispatch": false
-      },
-      {
-        "name": "claude-plugin-to-fastmcp",
-        "path": ".github/workflows/claude-plugin-to-fastmcp.yml",
-        "state": "active",
-        "dispatch_inputs": [],
-        "has_dispatch": false
-      },
-      {
-        "name": "Copilot Setup",
-        "path": ".github/workflows/copilot-setup-steps.yml",
-        "state": "active",
-        "dispatch_inputs": [],
-        "has_dispatch": false
-      },
-      {
-        "name": "D2 Render \u2014 ADR-054",
-        "path": ".github/workflows/d2-render.yml",
-        "state": "active",
-        "dispatch_inputs": [],
-        "has_dispatch": false
-      },
-      {
-        "name": "diff-smoke-v3 nightly",
-        "path": ".github/workflows/diff-smoke-v3-nightly.yml",
-        "state": "active",
-        "dispatch_inputs": [],
-        "has_dispatch": true
-      },
-      {
-        "name": "Gitleaks Repo Scan",
-        "path": ".github/workflows/gitleaks.yml",
-        "state": "active",
-        "dispatch_inputs": [],
-        "has_dispatch": false
-      },
-      {
-        "name": "Inspect gateway-pplx-tools app.py",
-        "path": ".github/workflows/inspect-mcp-app.yml",
-        "state": "active",
-        "dispatch_inputs": [],
-        "has_dispatch": false
-      },
-      {
-        "name": "OTEL Bring-up (Track-2)",
-        "path": ".github/workflows/otel-bringup.yml",
-        "state": "active",
-        "dispatch_inputs": [],
-        "has_dispatch": false
-      },
-      {
-        "name": "plugins-validate",
-        "path": ".github/workflows/plugins-validate.yml",
-        "state": "active",
-        "dispatch_inputs": [],
-        "has_dispatch": false
-      },
-      {
-        "name": "pplx-rest-mcp CI",
-        "path": ".github/workflows/pplx-rest-mcp-ci.yml",
-        "state": "active",
-        "dispatch_inputs": [],
-        "has_dispatch": false
-      },
-      {
-        "name": "pplx_gha / tests",
-        "path": ".github/workflows/test-pplx-gha.yml",
-        "state": "active",
-        "dispatch_inputs": [],
-        "has_dispatch": false
-      },
-      {
-        "name": "pplx_unified CI",
-        "path": ".github/workflows/pplx-unified-ci.yml",
-        "state": "active",
-        "dispatch_inputs": [],
-        "has_dispatch": false
-      },
-      {
-        "name": "Probe :3085 MCP init (follow redirects)",
-        "path": ".github/workflows/probe-3085-init.yml",
-        "state": "active",
-        "dispatch_inputs": [],
-        "has_dispatch": true
-      },
-      {
-        "name": "Probe :3085 MCP server",
-        "path": ".github/workflows/probe-3085.yml",
-        "state": "active",
-        "dispatch_inputs": [],
-        "has_dispatch": true
-      },
-      {
-        "name": "Probe pplx-tools stdio mode",
-        "path": ".github/workflows/probe-stdio.yml",
-        "state": "active",
-        "dispatch_inputs": [],
-        "has_dispatch": true
-      },
-      {
-        "name": "release-on-tag",
-        "path": ".github/workflows/release-on-tag.yml",
-        "state": "active",
-        "dispatch_inputs": [],
-        "has_dispatch": false
-      },
-      {
-        "name": "release-tag-preflight",
-        "path": ".github/workflows/release-tag-preflight.yml",
-        "state": "active",
-        "dispatch_inputs": [],
-        "has_dispatch": false
-      },
-      {
-        "name": "Skill Manifest Validate (ADR-096)",
-        "path": ".github/workflows/skill-manifest-validate.yml",
-        "state": "active",
-        "dispatch_inputs": [],
-        "has_dispatch": false
-      },
-      {
-        "name": "Smoke pplx-tools MCP target",
-        "path": ".github/workflows/smoke-pplx-tools.yml",
-        "state": "active",
-        "dispatch_inputs": [],
-        "has_dispatch": true
-      },
-      {
-        "name": "spec-coherence",
-        "path": ".github/workflows/spec-coherence.yml",
-        "state": "active",
-        "dispatch_inputs": [],
-        "has_dispatch": false
-      },
-      {
-        "name": "SSH Scripts Lint",
-        "path": ".github/workflows/ssh-lint.yml",
-        "state": "active",
-        "dispatch_inputs": [],
-        "has_dispatch": false
-      },
-      {
-        "name": "Test Collection",
-        "path": ".github/workflows/test-collect.yml",
-        "state": "active",
-        "dispatch_inputs": [],
-        "has_dispatch": false
-      },
-      {
-        "name": "Test gha-log-extractor",
-        "path": ".github/workflows/test-gha-log-extractor.yml",
-        "state": "active",
-        "dispatch_inputs": [],
-        "has_dispatch": false
-      },
-      {
-        "name": "Tests",
-        "path": ".github/workflows/test.yml",
-        "state": "active",
-        "dispatch_inputs": [],
-        "has_dispatch": false
-      },
-      {
-        "name": "wave-n-supervisor / tests",
-        "path": ".github/workflows/wave-n-supervisor-tests.yml",
-        "state": "active",
-        "dispatch_inputs": [],
-        "has_dispatch": false
       }
     ]
   },

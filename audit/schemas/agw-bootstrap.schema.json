@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/agw-bootstrap.schema.json",
+  "title": "AGW Bootstrap (ZBS-67/69)",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/agw-bootstrap.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sandbox_pubkey": {
+      "type": "string",
+      "description": "Sandbox SSH public key to authorize",
+      "x-gha-type": "string",
+      "x-gha-required": false
+    }
+  },
+  "required": [],
+  "x-workflow-name": "AGW Bootstrap (ZBS-67/69)",
+  "x-workflow-path": ".github/workflows/agw-bootstrap.yml",
+  "x-input-order": [
+    "sandbox_pubkey"
+  ]
+}

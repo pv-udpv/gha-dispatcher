@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/discover-pv-cargo.schema.json",
+  "title": "Discover pv-cargo",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/discover-pv-cargo.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {},
+  "required": [],
+  "x-workflow-name": "Discover pv-cargo",
+  "x-workflow-path": ".github/workflows/discover-pv-cargo.yml",
+  "x-input-order": []
+}

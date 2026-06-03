@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/comet-enum-watch.schema.json",
+  "title": "comet-enum-watch",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/comet-enum-watch.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "cdp_host": {
+      "type": "string",
+      "default": "localhost:9222",
+      "description": "CDP host:port (default: localhost:9222)",
+      "x-gha-type": "string",
+      "x-gha-required": false
+    },
+    "force_notify": {
+      "type": "boolean",
+      "default": false,
+      "description": "Always send notification even if no drift",
+      "x-gha-type": "boolean",
+      "x-gha-required": false
+    }
+  },
+  "required": [],
+  "x-workflow-name": "comet-enum-watch",
+  "x-workflow-path": ".github/workflows/comet-enum-watch.yml",
+  "x-input-order": [
+    "cdp_host",
+    "force_notify"
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/agent-fix.schema.json",
+  "title": "Agent-Fix Chain",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/agent-fix.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "issue_number": {
+      "type": "string",
+      "description": "GitHub issue number to fix (body becomes chain goal)",
+      "x-gha-type": "string",
+      "x-gha-required": true
+    },
+    "plan": {
+      "type": "string",
+      "enum": [
+        "dual-agent-review",
+        "full-cycle",
+        "tiered-research"
+      ],
+      "default": "dual-agent-review",
+      "description": "agent_runner plan name",
+      "x-gha-type": "choice",
+      "x-gha-required": false
+    },
+    "space_uuid": {
+      "type": "string",
+      "default": "954c3e4b-1928-49dc-b5a9-84f32f9359b4",
+      "description": "X-Pplx-Space UUID (for thread scoping)",
+      "x-gha-type": "string",
+      "x-gha-required": false
+    },
+    "badge": {
+      "type": "string",
+      "default": "agent-fix",
+      "description": "X-Pplx-Badge label shown in the Perplexity UI",
+      "x-gha-type": "string",
+      "x-gha-required": false
+    }
+  },
+  "required": [
+    "issue_number"
+  ],
+  "x-workflow-name": "Agent-Fix Chain",
+  "x-workflow-path": ".github/workflows/agent-fix.yml",
+  "x-input-order": [
+    "issue_number",
+    "plan",
+    "space_uuid",
+    "badge"
+  ]
+}

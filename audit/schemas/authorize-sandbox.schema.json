@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/authorize-sandbox.schema.json",
+  "title": "Authorize Sandbox Key",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/authorize-sandbox.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "pubkey": {
+      "type": "string",
+      "description": "SSH public key to authorize on pv-cargo for user pv",
+      "x-gha-type": "string",
+      "x-gha-required": true
+    }
+  },
+  "required": [
+    "pubkey"
+  ],
+  "x-workflow-name": "Authorize Sandbox Key",
+  "x-workflow-path": ".github/workflows/authorize-sandbox.yml",
+  "x-input-order": [
+    "pubkey"
+  ]
+}

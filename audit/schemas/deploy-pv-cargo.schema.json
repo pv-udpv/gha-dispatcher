@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/deploy-pv-cargo.schema.json",
+  "title": "Deploy to pv-cargo",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/deploy-pv-cargo.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "deploy_wave_403": {
+      "type": "boolean",
+      "default": false,
+      "description": "Deploy Wave-403 pydantic-ai supervisor to pv-cargo",
+      "x-gha-type": "boolean",
+      "x-gha-required": false
+    }
+  },
+  "required": [],
+  "x-workflow-name": "Deploy to pv-cargo",
+  "x-workflow-path": ".github/workflows/deploy-pv-cargo.yml",
+  "x-input-order": [
+    "deploy_wave_403"
+  ]
+}

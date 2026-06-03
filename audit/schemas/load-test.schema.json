@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/load-test.schema.json",
+  "title": "Load test \u2014 llm-proxy",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/load-test.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "users": {
+      "type": "string",
+      "default": "10",
+      "description": "Number of concurrent users",
+      "x-gha-type": "string",
+      "x-gha-required": true
+    },
+    "spawn_rate": {
+      "type": "string",
+      "default": "2",
+      "description": "Users spawned per second",
+      "x-gha-type": "string",
+      "x-gha-required": true
+    },
+    "run_time": {
+      "type": "string",
+      "default": "30s",
+      "description": "Test duration (e.g. 30s, 2m)",
+      "x-gha-type": "string",
+      "x-gha-required": true
+    },
+    "proxy_url": {
+      "type": "string",
+      "default": "http://localhost:8880",
+      "description": "llm-proxy base URL",
+      "x-gha-type": "string",
+      "x-gha-required": false
+    }
+  },
+  "required": [
+    "users",
+    "spawn_rate",
+    "run_time"
+  ],
+  "x-workflow-name": "Load test \u2014 llm-proxy",
+  "x-workflow-path": ".github/workflows/load-test.yml",
+  "x-input-order": [
+    "users",
+    "spawn_rate",
+    "run_time",
+    "proxy_url"
+  ]
+}

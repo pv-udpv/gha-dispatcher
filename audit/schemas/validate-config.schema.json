@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/validate-config.schema.json",
+  "title": "Validate agentgateway config (proposed)",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/validate-config.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "branch": {
+      "type": "string",
+      "default": "feat/expose-pplx-tools-mcp",
+      "x-gha-type": "string",
+      "x-gha-required": false
+    }
+  },
+  "required": [],
+  "x-workflow-name": "Validate agentgateway config (proposed)",
+  "x-workflow-path": ".github/workflows/validate-config.yml",
+  "x-input-order": [
+    "branch"
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/mcp-smoke-pvcargo.schema.json",
+  "title": "MCP Smoke \u2014 pv-cargo",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/mcp-smoke-pvcargo.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "no_tool_call": {
+      "type": "string",
+      "enum": [
+        "false",
+        "true"
+      ],
+      "default": "false",
+      "description": "Skip remote-run tool_call check (port+health only)",
+      "x-gha-type": "choice",
+      "x-gha-required": false
+    },
+    "skip_drift": {
+      "type": "string",
+      "enum": [
+        "false",
+        "true"
+      ],
+      "default": "false",
+      "description": "Skip unit-drift-check (smoke only)",
+      "x-gha-type": "choice",
+      "x-gha-required": false
+    }
+  },
+  "required": [],
+  "x-workflow-name": "MCP Smoke \u2014 pv-cargo",
+  "x-workflow-path": ".github/workflows/mcp-smoke-pvcargo.yml",
+  "x-input-order": [
+    "no_tool_call",
+    "skip_drift"
+  ]
+}

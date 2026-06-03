@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/comet-drift.schema.json",
+  "title": "comet-drift",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/comet-drift.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "channels": {
+      "type": "string",
+      "default": "stable,dev,canary",
+      "description": "CRX channels to probe (comma-separated, e.g. stable,dev,canary)",
+      "x-gha-type": "string",
+      "x-gha-required": false
+    },
+    "strict": {
+      "type": "boolean",
+      "default": true,
+      "description": "Fail the job on drift (default true)",
+      "x-gha-type": "boolean",
+      "x-gha-required": false
+    }
+  },
+  "required": [],
+  "x-workflow-name": "comet-drift",
+  "x-workflow-path": ".github/workflows/comet-drift.yml",
+  "x-input-order": [
+    "channels",
+    "strict"
+  ]
+}

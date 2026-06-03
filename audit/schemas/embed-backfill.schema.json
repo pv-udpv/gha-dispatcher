@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/embed-backfill.schema.json",
+  "title": "KG Embeddings Backfill",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/embed-backfill.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "force": {
+      "type": "boolean",
+      "default": false,
+      "description": "Re-embed all entities (even with existing embeddings)",
+      "x-gha-type": "boolean",
+      "x-gha-required": false
+    }
+  },
+  "required": [],
+  "x-workflow-name": "KG Embeddings Backfill",
+  "x-workflow-path": ".github/workflows/embed-backfill.yml",
+  "x-input-order": [
+    "force"
+  ]
+}

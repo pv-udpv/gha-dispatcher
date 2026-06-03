@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/pplx-monitor.schema.json",
+  "title": "pplx-monitor",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/pplx-monitor.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "window_days": {
+      "type": "string",
+      "default": "7",
+      "description": "Lookback window in days",
+      "x-gha-type": "string",
+      "x-gha-required": false
+    },
+    "dry_run": {
+      "type": "boolean",
+      "default": false,
+      "description": "Build artifacts but skip Resend + beacon tag",
+      "x-gha-type": "boolean",
+      "x-gha-required": false
+    },
+    "skip_if_recent": {
+      "type": "boolean",
+      "default": false,
+      "description": "Abort if another runner just emitted a digest",
+      "x-gha-type": "boolean",
+      "x-gha-required": false
+    }
+  },
+  "required": [],
+  "x-workflow-name": "pplx-monitor",
+  "x-workflow-path": ".github/workflows/pplx-monitor.yml",
+  "x-input-order": [
+    "window_days",
+    "dry_run",
+    "skip_if_recent"
+  ]
+}

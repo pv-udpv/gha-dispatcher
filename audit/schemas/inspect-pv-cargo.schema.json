@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/inspect-pv-cargo.schema.json",
+  "title": "Inspect pv-cargo MCP topology",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/inspect-pv-cargo.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {},
+  "required": [],
+  "x-workflow-name": "Inspect pv-cargo MCP topology",
+  "x-workflow-path": ".github/workflows/inspect-pv-cargo.yml",
+  "x-input-order": []
+}

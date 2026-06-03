@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/experiment-engine.schema.json",
+  "title": "Experiment Engine \u2014 Self-Hosted",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/experiment-engine.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "task": {
+      "type": "string",
+      "enum": [
+        "smoke-test",
+        "lint",
+        "run-experiment",
+        "sync-supabase",
+        "collect-evidence"
+      ],
+      "description": "Task to run",
+      "x-gha-type": "choice",
+      "x-gha-required": true
+    },
+    "experiment_id": {
+      "type": "string",
+      "description": "Experiment ID (for run-experiment/collect-evidence)",
+      "x-gha-type": "string",
+      "x-gha-required": false
+    },
+    "context_uuid": {
+      "type": "string",
+      "description": "Thread context_uuid (for run-experiment)",
+      "x-gha-type": "string",
+      "x-gha-required": false
+    },
+    "extra_args": {
+      "type": "string",
+      "description": "Extra arguments passed to the task",
+      "x-gha-type": "string",
+      "x-gha-required": false
+    }
+  },
+  "required": [
+    "task"
+  ],
+  "x-workflow-name": "Experiment Engine \u2014 Self-Hosted",
+  "x-workflow-path": ".github/workflows/experiment-engine.yml",
+  "x-input-order": [
+    "task",
+    "experiment_id",
+    "context_uuid",
+    "extra_args"
+  ]
+}

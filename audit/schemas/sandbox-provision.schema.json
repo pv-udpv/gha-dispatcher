@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/sandbox-provision.schema.json",
+  "title": "Sandbox SSH Provision",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/sandbox-provision.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sandbox_id": {
+      "type": "string",
+      "description": "E2B sandbox ID to provision",
+      "x-gha-type": "string",
+      "x-gha-required": true
+    }
+  },
+  "required": [
+    "sandbox_id"
+  ],
+  "x-workflow-name": "Sandbox SSH Provision",
+  "x-workflow-path": ".github/workflows/sandbox-provision.yml",
+  "x-input-order": [
+    "sandbox_id"
+  ]
+}

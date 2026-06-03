@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/agw-k8s-bootstrap.schema.json",
+  "title": "AGW K8s Bootstrap (ADR-097) \u2014 lazy validate",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/agw-k8s-bootstrap.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "intent": {
+      "type": "string",
+      "enum": [
+        "all",
+        "local-minikube",
+        "e2b-tailnet-mcp",
+        "vault-secrets",
+        "ci-quality-gate",
+        "pplx-dxt-source",
+        "debug-401-503",
+        "e2b-tsnet-mcp",
+        "ingress-cf-dns",
+        "tsnet-funnel"
+      ],
+      "default": "all",
+      "description": "Intent to lazy-run (or \"all\" for every intent)",
+      "x-gha-type": "choice",
+      "x-gha-required": false
+    }
+  },
+  "required": [],
+  "x-workflow-name": "AGW K8s Bootstrap (ADR-097) \u2014 lazy validate",
+  "x-workflow-path": ".github/workflows/agw-k8s-bootstrap.yml",
+  "x-input-order": [
+    "intent"
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/workflows-mcp-handoff.schema.json",
+  "title": "workflows-mcp-handoff",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/workflows-mcp-handoff.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "zone": {
+      "type": "string",
+      "default": "zbst.tech",
+      "description": "Apex zone",
+      "x-gha-type": "string",
+      "x-gha-required": false
+    },
+    "hostname": {
+      "type": "string",
+      "default": "workflows-mcp.zbst.tech",
+      "description": "Public hostname",
+      "x-gha-type": "string",
+      "x-gha-required": false
+    },
+    "tunnel_name": {
+      "type": "string",
+      "default": "pplx-workflows-mcp",
+      "description": "Cloudflare tunnel name",
+      "x-gha-type": "string",
+      "x-gha-required": false
+    },
+    "run_minutes": {
+      "type": "string",
+      "default": "300",
+      "description": "How long to hold the tunnel running (max ~330 on GHA free)",
+      "x-gha-type": "string",
+      "x-gha-required": false
+    },
+    "skip_bootstrap": {
+      "type": "boolean",
+      "default": false,
+      "description": "Skip bootstrap job (use existing CF_TUNNEL_TOKEN)",
+      "x-gha-type": "boolean",
+      "x-gha-required": false
+    },
+    "skip_register": {
+      "type": "boolean",
+      "default": false,
+      "description": "Skip Perplexity source registration",
+      "x-gha-type": "boolean",
+      "x-gha-required": false
+    }
+  },
+  "required": [],
+  "x-workflow-name": "workflows-mcp-handoff",
+  "x-workflow-path": ".github/workflows/workflows-mcp-handoff.yml",
+  "x-input-order": [
+    "zone",
+    "hostname",
+    "tunnel_name",
+    "run_minutes",
+    "skip_bootstrap",
+    "skip_register"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/inspect-mcp-app.schema.json",
+  "title": "Inspect gateway-pplx-tools app.py",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/inspect-mcp-app.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {},
+  "required": [],
+  "x-workflow-name": "Inspect gateway-pplx-tools app.py",
+  "x-workflow-path": ".github/workflows/inspect-mcp-app.yml",
+  "x-input-order": []
+}

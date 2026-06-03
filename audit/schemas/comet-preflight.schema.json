@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/comet-preflight.schema.json",
+  "title": "comet-preflight",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/comet-preflight.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "force_notify": {
+      "type": "boolean",
+      "default": false,
+      "description": "Notify even if all checks pass",
+      "x-gha-type": "boolean",
+      "x-gha-required": false
+    }
+  },
+  "required": [],
+  "x-workflow-name": "comet-preflight",
+  "x-workflow-path": ".github/workflows/comet-preflight.yml",
+  "x-input-order": [
+    "force_notify"
+  ]
+}

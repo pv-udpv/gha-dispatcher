@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/spa-corpus-pipeline.schema.json",
+  "title": "SPA Corpus \u2014 full pipeline",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/spa-corpus-pipeline.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "bundle_source": {
+      "type": "string",
+      "enum": [
+        "fetch",
+        "local"
+      ],
+      "default": "fetch",
+      "description": "Bundle source: fetch (live from perplexity.ai) | local (use research/extracted/comet/latest)",
+      "x-gha-type": "choice",
+      "x-gha-required": false
+    },
+    "version": {
+      "type": "string",
+      "default": "unknown",
+      "description": "Fallback version tag if meta absent",
+      "x-gha-type": "string",
+      "x-gha-required": false
+    },
+    "hf_repo": {
+      "type": "string",
+      "default": "ormwish/pplx-lab",
+      "description": "HF dataset repo",
+      "x-gha-type": "string",
+      "x-gha-required": false
+    },
+    "skip_embed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Skip embedding stage (faster, no vectors)",
+      "x-gha-type": "boolean",
+      "x-gha-required": false
+    }
+  },
+  "required": [],
+  "x-workflow-name": "SPA Corpus \u2014 full pipeline",
+  "x-workflow-path": ".github/workflows/spa-corpus-pipeline.yml",
+  "x-input-order": [
+    "bundle_source",
+    "version",
+    "hf_repo",
+    "skip_embed"
+  ]
+}

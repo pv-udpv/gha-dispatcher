@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/ligolo-proxy-start.schema.json",
+  "title": "ligolo-proxy-start",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/ligolo-proxy-start.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "port": {
+      "type": "string",
+      "default": "11601",
+      "description": "Listen port",
+      "x-gha-type": "string",
+      "x-gha-required": false
+    }
+  },
+  "required": [],
+  "x-workflow-name": "ligolo-proxy-start",
+  "x-workflow-path": ".github/workflows/ligolo-proxy-start.yml",
+  "x-input-order": [
+    "port"
+  ]
+}

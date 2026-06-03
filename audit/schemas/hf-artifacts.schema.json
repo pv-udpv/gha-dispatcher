@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/hf-artifacts.schema.json",
+  "title": "hf-artifacts",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/hf-artifacts.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "force-refresh": {
+      "type": "boolean",
+      "default": false,
+      "description": "Force re-download even if cache key matches",
+      "x-gha-type": "boolean",
+      "x-gha-required": false
+    }
+  },
+  "required": [],
+  "x-workflow-name": "hf-artifacts",
+  "x-workflow-path": ".github/workflows/hf-artifacts.yml",
+  "x-input-order": [
+    "force-refresh"
+  ]
+}

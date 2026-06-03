@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/release.schema.json",
+  "title": "Release",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/release.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "package": {
+      "type": "string",
+      "description": "Package name (e.g. fs_bridge, pplx-lab-bundle)",
+      "x-gha-type": "string",
+      "x-gha-required": true
+    },
+    "version": {
+      "type": "string",
+      "description": "SemVer X.Y.Z to release",
+      "x-gha-type": "string",
+      "x-gha-required": true
+    }
+  },
+  "required": [
+    "package",
+    "version"
+  ],
+  "x-workflow-name": "Release",
+  "x-workflow-path": ".github/workflows/release.yml",
+  "x-input-order": [
+    "package",
+    "version"
+  ]
+}

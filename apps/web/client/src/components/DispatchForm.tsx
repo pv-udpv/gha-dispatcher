@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Check, ChevronsUpDown, Send, GitBranch, Loader2 } from "lucide-react";
-import type { WorkflowMeta, DispatchInput } from "@gha-dispatcher/shared";
+import { Check, ChevronsUpDown, Send, GitBranch, Loader2, AlertTriangle, Info } from "lucide-react";
+import type { WorkflowMeta, DispatchInput, AuditFinding } from "@gha-dispatcher/shared";
+import { workflowSchemas } from "@gha-dispatcher/shared";
 import { useGithub } from "@/lib/github-context";
 import { useRepo } from "@/lib/repoContext";
 import { fetchBranches, dispatchWorkflow, type DispatchResult } from "@/lib/api";
@@ -42,6 +43,37 @@ function fileBasename(path: string): string {
   return path.split("/").pop() || path;
 }
 
+// Derive the audit "id" key used in workflow-schemas.json — same stem the
+// audit script uses: basename without .yml/.yaml suffix.
+function workflowId(path: string): string {
+  return fileBasename(path).replace(/\.(ya?ml)$/i, "");
+}
+
+// Pull audit findings for this workflow from the bundled schema package.
+// Returns a map keyed by input name (plus a "_workflow" bucket for whole-file issues).
+function findingsForWorkflow(path: string): {
+  byInput: Record<string, AuditFinding[]>;
+  workflow: AuditFinding[];
+  schemaRef: Record<string, unknown> | null;
+} {
+  const id = workflowId(path);
+  const bundle = workflowSchemas as unknown as {
+    workflows: Record<string, { findings: AuditFinding[]; schema: Record<string, unknown> | null }>;
+  };
+  const rec = bundle.workflows[id];
+  if (!rec) return { byInput: {}, workflow: [], schemaRef: null };
+  const byInput: Record<string, AuditFinding[]> = {};
+  const workflowLevel: AuditFinding[] = [];
+  for (const f of rec.findings || []) {
+    if (f.input) {
+      (byInput[f.input] ||= []).push(f);
+    } else {
+      workflowLevel.push(f);
+    }
+  }
+  return { byInput, workflow: workflowLevel, schemaRef: rec.schema };
+}
+
 function buildInitialValues(inputs: DispatchInput[]): Record<string, string | boolean> {
   const out: Record<string, string | boolean> = {};
   for (const inp of inputs) {
@@ -62,6 +94,8 @@ export function DispatchForm({ workflow, group, defaultBranch, onDispatched }: P
   const { connected, authHeader } = useGithub();
   const { currentRepoFull } = useRepo();
   const inputs = workflow.dispatch_inputs || [];
+  const { byInput: findingsByInput, workflow: workflowFindings, schemaRef } =
+    useMemo(() => findingsForWorkflow(workflow.path), [workflow.path]);
 
   const [ref, setRef] = useState(defaultBranch);
   const [branchQuery, setBranchQuery] = useState("");
@@ -117,14 +151,43 @@ export function DispatchForm({ workflow, group, defaultBranch, onDispatched }: P
 
   return (
     <div className="border-t border-border bg-background/50 p-4">
-      <div className="mb-3">
-        <p className="font-mono text-sm font-medium text-foreground" data-testid="text-selected-workflow">
-          {workflow.name}
-        </p>
-        <p className="font-mono text-xs text-muted-foreground">
-          {fileBasename(workflow.path)}
-        </p>
+      <div className="mb-3 flex items-start justify-between gap-3">
+        <div>
+          <p className="font-mono text-sm font-medium text-foreground" data-testid="text-selected-workflow">
+            {workflow.name}
+          </p>
+          <p className="font-mono text-xs text-muted-foreground">
+            {fileBasename(workflow.path)}
+          </p>
+        </div>
+        {schemaRef && (
+          <a
+            href={`/api/workflows/${workflowId(workflow.path)}/schema`}
+            target="_blank"
+            rel="noreferrer"
+            className="shrink-0 rounded border border-border bg-muted/40 px-2 py-1 font-mono text-[10px] text-muted-foreground hover:border-primary/40 hover:text-foreground"
+            data-testid="link-workflow-schema"
+            title="View JSON Schema (Draft 2020-12)"
+          >
+            schema
+          </a>
+        )}
       </div>
+
+      {workflowFindings.length > 0 && (
+        <div className="mb-3 space-y-1">
+          {workflowFindings.map((f, i) => (
+            <div
+              key={i}
+              className="flex items-start gap-1.5 rounded-md border border-amber-500/30 bg-amber-500/5 px-2 py-1.5 text-xs text-amber-700 dark:text-amber-300"
+              data-testid={`finding-workflow-${f.kind}`}
+            >
+              <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0" />
+              <span><span className="font-mono">{f.kind}</span> — {f.message}</span>
+            </div>
+          ))}
+        </div>
+      )}
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         {/* Branch autocomplete */}
@@ -218,6 +281,25 @@ export function DispatchForm({ workflow, group, defaultBranch, onDispatched }: P
             <Label htmlFor={`inp-${inp.name}`} className="flex items-center gap-1 text-xs">
               <span className="font-mono">{inp.name}</span>
               {inp.required && <span className="text-destructive">*</span>}
+              {(findingsByInput[inp.name] || []).map((f) => {
+                const isInfo = f.severity === "info";
+                return (
+                  <span
+                    key={f.kind}
+                    className={cn(
+                      "ml-1 inline-flex items-center gap-0.5 rounded border px-1 py-0.5 font-mono text-[9px] uppercase tracking-wide",
+                      isInfo
+                        ? "border-blue-500/40 bg-blue-500/10 text-blue-700 dark:text-blue-300"
+                        : "border-amber-500/40 bg-amber-500/10 text-amber-700 dark:text-amber-300",
+                    )}
+                    title={f.message}
+                    data-testid={`finding-input-${inp.name}-${f.kind}`}
+                  >
+                    {isInfo ? <Info className="h-2.5 w-2.5" /> : <AlertTriangle className="h-2.5 w-2.5" />}
+                    {f.kind.replace(/_/g, " ")}
+                  </span>
+                );
+              })}
             </Label>
 
             {inp.type === "boolean" ? (

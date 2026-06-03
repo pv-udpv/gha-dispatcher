@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/recover-agentgateway.schema.json",
+  "title": "Break-glass recover agentgateway",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/recover-agentgateway.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "reason": {
+      "type": "string",
+      "default": "manual break-glass",
+      "description": "Recovery reason / context",
+      "x-gha-type": "string",
+      "x-gha-required": false
+    },
+    "probe_after": {
+      "type": "string",
+      "default": "true",
+      "description": "Run probes after recovery",
+      "x-gha-type": "string",
+      "x-gha-required": false
+    }
+  },
+  "required": [],
+  "x-workflow-name": "Break-glass recover agentgateway",
+  "x-workflow-path": ".github/workflows/recover-agentgateway.yml",
+  "x-input-order": [
+    "reason",
+    "probe_after"
+  ]
+}

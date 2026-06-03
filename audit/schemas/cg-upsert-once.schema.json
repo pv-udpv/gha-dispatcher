@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/cg-upsert-once.schema.json",
+  "title": "CG Direct Upsert (one-off)",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/cg-upsert-once.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "since": {
+      "type": "string",
+      "default": "2026-05-13",
+      "description": "Upsert nodes captured >= date (YYYY-MM-DD)",
+      "x-gha-type": "string",
+      "x-gha-required": false
+    },
+    "all_nodes": {
+      "type": "boolean",
+      "default": false,
+      "description": "Upsert all nodes (ignore --since)",
+      "x-gha-type": "boolean",
+      "x-gha-required": false
+    }
+  },
+  "required": [],
+  "x-workflow-name": "CG Direct Upsert (one-off)",
+  "x-workflow-path": ".github/workflows/cg-upsert-once.yml",
+  "x-input-order": [
+    "since",
+    "all_nodes"
+  ]
+}

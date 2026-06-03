@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/deploy-plugin-mcp.schema.json",
+  "title": "Deploy plugin-mcp to Supabase",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/deploy-plugin-mcp.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "force": {
+      "type": "boolean",
+      "default": true,
+      "description": "Force re-deploy",
+      "x-gha-type": "boolean",
+      "x-gha-required": false
+    }
+  },
+  "required": [],
+  "x-workflow-name": "Deploy plugin-mcp to Supabase",
+  "x-workflow-path": ".github/workflows/deploy-plugin-mcp.yml",
+  "x-input-order": [
+    "force"
+  ]
+}

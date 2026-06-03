@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/probe-stdio.schema.json",
+  "title": "Probe pplx-tools stdio mode",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/probe-stdio.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {},
+  "required": [],
+  "x-workflow-name": "Probe pplx-tools stdio mode",
+  "x-workflow-path": ".github/workflows/probe-stdio.yml",
+  "x-input-order": []
+}

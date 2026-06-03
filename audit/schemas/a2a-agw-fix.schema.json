@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/a2a-agw-fix.schema.json",
+  "title": "Fix AGW A2A config and deploy CLI runners",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/a2a-agw-fix.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "deploy_cli_runners": {
+      "type": "boolean",
+      "default": true,
+      "description": "Deploy claude-code and codex-cli A2A nodes",
+      "x-gha-type": "boolean",
+      "x-gha-required": false
+    }
+  },
+  "required": [],
+  "x-workflow-name": "Fix AGW A2A config and deploy CLI runners",
+  "x-workflow-path": ".github/workflows/a2a-agw-fix.yml",
+  "x-input-order": [
+    "deploy_cli_runners"
+  ]
+}

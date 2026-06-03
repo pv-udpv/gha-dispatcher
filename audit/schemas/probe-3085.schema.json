@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/probe-3085.schema.json",
+  "title": "Probe :3085 MCP server",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/probe-3085.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {},
+  "required": [],
+  "x-workflow-name": "Probe :3085 MCP server",
+  "x-workflow-path": ".github/workflows/probe-3085.yml",
+  "x-input-order": []
+}

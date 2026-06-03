@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pplx-lab/workflows/spa-corpus-upload.schema.json",
+  "title": "SPA Corpus \u2014 upload to HF",
+  "description": "Inputs for workflow_dispatch of `.github/workflows/spa-corpus-upload.yml` (pv-udpv/pplx-lab).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "string",
+      "default": "bb36baf",
+      "description": "Fallback version if meta tag absent",
+      "x-gha-type": "string",
+      "x-gha-required": false
+    },
+    "hf_repo": {
+      "type": "string",
+      "default": "ormwish/pplx-lab",
+      "description": "HF dataset repo",
+      "x-gha-type": "string",
+      "x-gha-required": false
+    }
+  },
+  "required": [],
+  "x-workflow-name": "SPA Corpus \u2014 upload to HF",
+  "x-workflow-path": ".github/workflows/spa-corpus-upload.yml",
+  "x-input-order": [
+    "version",
+    "hf_repo"
+  ]
+}
